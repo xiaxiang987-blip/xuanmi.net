@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="玄咪AI NexusMeta - 玄学文化出海一站式AI内容解决方案。AI数字人、多语言命理翻译、八字大模型，服务全球1.2亿海外华人。"/>
+    <meta name="keywords" content="玄学AI,命理AI,数字人,多语言翻译,八字,风水,出海,海外华人"/>
+    <meta property="og:title" content="玄咪AI NexusMeta - 玄学文化出海AI平台"/>
+    <meta property="og:description" content="AI数字人+命理大模型+多语言翻译，帮助玄学从业者服务全球1.2亿海外华人"/>
+    <title>玄咪AI NexusMeta | 玄学文化出海一站式AI内容平台</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <style>
+      /* Preloader */
+      #preloader {
+        position: fixed;
+        inset: 0;
+        background: #050510;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 99999;
+        transition: opacity 0.5s ease;
+      }
+      #preloader.fade-out {
+        opacity: 0;
+        pointer-events: none;
+      }
+      .preloader-inner {
+        text-align: center;
+      }
+      .preloader-taiji {
+        width: 60px;
+        height: 60px;
+        animation: spin 2s linear infinite;
+        margin: 0 auto 16px;
+      }
+      @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      .preloader-text {
+        color: #d4af37;
+        font-size: 14px;
+        letter-spacing: 4px;
+        font-family: sans-serif;
+      }
+    </style>
+    <script type="module" crossorigin src="./assets/index-BoYye1RX.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DHH05elM.css">
+  </head>
+  <body>
+    <!-- Preloader -->
+    <div id="preloader">
+      <div class="preloader-inner">
+        <svg class="preloader-taiji" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="30" cy="30" r="28" stroke="#7c3aed" stroke-width="1"/>
+          <path d="M30 2 A28 28 0 0 1 30 58 A14 14 0 0 1 30 30 A14 14 0 0 0 30 2Z" fill="#7c3aed" opacity="0.7"/>
+          <circle cx="30" cy="16" r="6" fill="#d4af37" opacity="0.8"/>
+          <circle cx="30" cy="44" r="6" fill="#1a0a2e"/>
+          <circle cx="30" cy="16" r="3" fill="#1a0a2e"/>
+          <circle cx="30" cy="44" r="3" fill="#d4af37" opacity="0.8"/>
+        </svg>
+        <div class="preloader-text">玄咪 AI · LOADING</div>
+      </div>
+    </div>
+
+    <div id="root"></div>
+    <script>
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          var pl = document.getElementById('preloader');
+          if (pl) {
+            pl.classList.add('fade-out');
+            setTimeout(function() { pl.remove(); }, 500);
+          }
+        }, 800);
+      });
+    </script>
+  </body>
+</html>
