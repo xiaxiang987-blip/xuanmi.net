@@ -1,80 +1,4069 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="玄咪AI NexusMeta - 玄学文化出海一站式AI内容解决方案。AI数字人、多语言命理翻译、八字大模型，服务全球1.2亿海外华人。"/>
-    <meta name="keywords" content="玄学AI,命理AI,数字人,多语言翻译,八字,风水,出海,海外华人"/>
-    <meta property="og:title" content="玄咪AI NexusMeta - 玄学文化出海AI平台"/>
-    <meta property="og:description" content="AI数字人+命理大模型+多语言翻译，帮助玄学从业者服务全球1.2亿海外华人"/>
-    <title>玄咪AI NexusMeta | 玄学文化出海一站式AI内容平台</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>玄咪AI NexusMeta | 玄学文化出海AI一站式解决方案</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-      /* Preloader */
-      #preloader {
-        position: fixed;
-        inset: 0;
-        background: #050510;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 99999;
-        transition: opacity 0.5s ease;
-      }
-      #preloader.fade-out {
-        opacity: 0;
-        pointer-events: none;
-      }
-      .preloader-inner {
-        text-align: center;
-      }
-      .preloader-taiji {
-        width: 60px;
-        height: 60px;
-        animation: spin 2s linear infinite;
-        margin: 0 auto 16px;
-      }
-      @keyframes spin {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-      }
-      .preloader-text {
-        color: #d4af37;
-        font-size: 14px;
-        letter-spacing: 4px;
-        font-family: sans-serif;
-      }
+        :root {
+            --bg-deep: #050510;
+            --bg-secondary: #0a0a1a;
+            --purple-primary: #7c3aed;
+            --purple-light: #a78bfa;
+            --purple-dark: #5b21b6;
+            --gold: #d4af37;
+            --gold-light: #f0d77b;
+            --gold-dark: #a67c28;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-primary: #f0f0ff;
+            --text-secondary: #a0a0c0;
+            --text-muted: #606080;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-primary);
+            font-family: 'PingFang SC', 'Microsoft YaHei', 'Helvetica Neue', Arial, sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* ========== 星空粒子背景 ========== */
+        .starfield {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle var(--duration, 3s) ease-in-out infinite;
+            opacity: 0;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0; transform: scale(0.5); }
+            50% { opacity: var(--opacity, 0.8); transform: scale(1); }
+        }
+
+        /* ========== 太极旋转背景 ========== */
+        .taiji-bg {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 800px;
+            height: 800px;
+            z-index: 0;
+            pointer-events: none;
+            opacity: 0.04;
+            animation: taiji-rotate 60s linear infinite;
+        }
+
+        .taiji-bg::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: conic-gradient(from 0deg, transparent 0deg, var(--purple-primary) 90deg, transparent 180deg, var(--gold) 270deg, transparent 360deg);
+            filter: blur(40px);
+        }
+
+        @keyframes taiji-rotate {
+            from { transform: translate(-50%, -50%) rotate(0deg); }
+            to { transform: translate(-50%, -50%) rotate(360deg); }
+        }
+
+        /* ========== 导航栏 ========== */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            transition: all 0.4s ease;
+            padding: 16px 0;
+        }
+
+        .navbar.scrolled {
+            background: rgba(5, 5, 16, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+            padding: 10px 0;
+        }
+
+        .navbar.scrolled .nav-inner {
+            box-shadow: 0 4px 30px rgba(124, 58, 237, 0.1);
+        }
+
+        .nav-inner {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            transition: all 0.3s ease;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--purple-primary), var(--gold));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: bold;
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .logo-icon::after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 50%;
+            height: 50%;
+            background: var(--bg-deep);
+            border-radius: 0 0 100% 0;
+        }
+
+        .logo-text {
+            font-size: 18px;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--purple-light), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--gold);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gold);
+            transition: width 0.3s ease;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .lang-switcher {
+            display: flex;
+            gap: 4px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            padding: 4px;
+            border: 1px solid var(--card-border);
+        }
+
+        .lang-btn {
+            padding: 4px 10px;
+            font-size: 12px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn.active {
+            background: linear-gradient(135deg, var(--purple-primary), var(--purple-dark));
+            color: white;
+        }
+
+        .btn-login {
+            padding: 8px 20px;
+            font-size: 14px;
+            color: var(--text-primary);
+            border: 1px solid var(--card-border);
+            background: transparent;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .btn-login:hover {
+            border-color: var(--purple-light);
+            background: rgba(124, 58, 237, 0.1);
+        }
+
+        .btn-primary {
+            padding: 10px 24px;
+            font-size: 14px;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, var(--purple-primary), var(--purple-dark));
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s ease;
+        }
+
+        .btn-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.4);
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            gap: 5px;
+            cursor: pointer;
+            padding: 8px;
+            background: none;
+            border: none;
+        }
+
+        .hamburger span {
+            width: 24px;
+            height: 2px;
+            background: var(--text-primary);
+            transition: all 0.3s ease;
+            border-radius: 2px;
+        }
+
+        .hamburger.active span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .hamburger.active span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .hamburger.active span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            width: 100%;
+            background: rgba(5, 5, 16, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 24px;
+            border-bottom: 1px solid rgba(124, 58, 237, 0.2);
+            transform: translateY(-100%);
+            opacity: 0;
+            transition: all 0.4s ease;
+            z-index: 999;
+        }
+
+        .mobile-menu.active {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .mobile-menu a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 16px;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            transition: color 0.3s ease;
+        }
+
+        .mobile-menu a:hover {
+            color: var(--gold);
+        }
+
+        .mobile-menu .mobile-btns {
+            display: flex;
+            gap: 12px;
+            margin-top: 12px;
+        }
+
+        /* ========== Hero 区域 ========== */
+        .hero {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 120px 32px 80px;
+            z-index: 1;
+        }
+
+        .hero-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+            width: 100%;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: rgba(124, 58, 237, 0.15);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            border-radius: 100px;
+            font-size: 13px;
+            color: var(--purple-light);
+            margin-bottom: 24px;
+            animation: badge-pulse 3s ease-in-out infinite;
+        }
+
+        @keyframes badge-pulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.3); }
+            50% { box-shadow: 0 0 20px 5px rgba(124, 58, 237, 0.1); }
+        }
+
+        .hero-badge .dot {
+            width: 8px;
+            height: 8px;
+            background: var(--gold);
+            border-radius: 50%;
+            animation: dot-blink 2s ease-in-out infinite;
+        }
+
+        @keyframes dot-blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .hero h1 {
+            font-size: 56px;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 24px;
+            letter-spacing: -1px;
+        }
+
+        .hero h1 .gradient-text {
+            background: linear-gradient(90deg, var(--purple-light), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero h1 .highlight {
+            color: var(--gold);
+        }
+
+        .hero-subtitle {
+            font-size: 18px;
+            color: var(--text-secondary);
+            margin-bottom: 36px;
+            line-height: 1.8;
+            max-width: 520px;
+        }
+
+        .hero-cta {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 48px;
+        }
+
+        .btn-cta-primary {
+            padding: 14px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            color: white;
+            background: linear-gradient(135deg, var(--purple-primary), var(--purple-dark));
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
+        }
+
+        .btn-cta-primary::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .btn-cta-primary:hover::before {
+            left: 100%;
+        }
+
+        .btn-cta-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(124, 58, 237, 0.5);
+        }
+
+        .btn-cta-secondary {
+            padding: 14px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--gold);
+            background: transparent;
+            border: 2px solid var(--gold);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-cta-secondary:hover {
+            background: rgba(212, 175, 55, 0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 12px 35px rgba(212, 175, 55, 0.2);
+        }
+
+        .hero-stats {
+            display: flex;
+            gap: 48px;
+        }
+
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-number {
+            font-size: 36px;
+            font-weight: 800;
+            background: linear-gradient(90deg, var(--gold), var(--gold-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+        }
+
+        /* ========== Hero Dashboard Mockup ========== */
+        .dashboard-mockup {
+            position: relative;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(212, 175, 55, 0.05));
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 24px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-15px); }
+        }
+
+        .dashboard-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .dashboard-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .dashboard-dots {
+            display: flex;
+            gap: 6px;
+        }
+
+        .dashboard-dots span {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .dashboard-body {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .dashboard-card {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .dashboard-card-title {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .dashboard-card-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .dashboard-card-value.purple {
+            color: var(--purple-light);
+        }
+
+        .dashboard-chart {
+            grid-column: span 2;
+            height: 120px;
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+            padding-top: 10px;
+        }
+
+        .chart-bar {
+            flex: 1;
+            background: linear-gradient(180deg, var(--purple-primary), var(--purple-dark));
+            border-radius: 4px 4px 0 0;
+            animation: chart-grow 2s ease-out infinite alternate;
+            opacity: 0.8;
+        }
+
+        @keyframes chart-grow {
+            from { height: 30%; }
+            to { height: 90%; }
+        }
+
+        .dashboard-avatar {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .avatar-circle {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--purple-primary), var(--gold));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: white;
+            font-weight: 600;
+        }
+
+        .avatar-info {
+            font-size: 12px;
+        }
+
+        .avatar-info .name {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .avatar-info .role {
+            color: var(--text-muted);
+        }
+
+        /* ========== 通用 Section 样式 ========== */
+        .section {
+            position: relative;
+            padding: 100px 32px;
+            z-index: 1;
+        }
+
+        .section-container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 64px;
+        }
+
+        .section-tag {
+            display: inline-block;
+            padding: 4px 16px;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 100px;
+            font-size: 13px;
+            color: var(--gold);
+            margin-bottom: 16px;
+            letter-spacing: 1px;
+        }
+
+        .section-title {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            line-height: 1.2;
+        }
+
+        .section-title .gradient-text {
+            background: linear-gradient(90deg, var(--purple-light), var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-subtitle {
+            font-size: 17px;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+            line-height: 1.8;
+        }
+
+        /* ========== 客户 Logo 墙 ========== */
+        .logo-wall-section {
+            padding: 60px 0;
+            overflow: hidden;
+            border-top: 1px solid var(--card-border);
+            border-bottom: 1px solid var(--card-border);
+            background: rgba(10, 10, 26, 0.5);
+        }
+
+        .logo-wall-title {
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-muted);
+            margin-bottom: 32px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .logo-scroll {
+            display: flex;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .logo-scroll::before,
+        .logo-scroll::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            width: 120px;
+            height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+
+        .logo-scroll::before {
+            left: 0;
+            background: linear-gradient(90deg, var(--bg-deep), transparent);
+        }
+
+        .logo-scroll::after {
+            right: 0;
+            background: linear-gradient(270deg, var(--bg-deep), transparent);
+        }
+
+        .logo-track {
+            display: flex;
+            gap: 60px;
+            animation: scroll-logos 30s linear infinite;
+            flex-shrink: 0;
+        }
+
+        @keyframes scroll-logos {
+            from { transform: translateX(0); }
+            to { transform: translateX(-50%); }
+        }
+
+        .logo-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            opacity: 0.6;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .logo-item:hover {
+            opacity: 1;
+            color: var(--gold);
+        }
+
+        .logo-item .icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, var(--purple-primary), var(--purple-dark));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: white;
+        }
+
+        /* ========== 功能卡片 ========== */
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 36px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .feature-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at 50% 0%, rgba(124, 58, 237, 0.15), transparent 70%);
+            opacity: 0;
+            transition: opacity 0.4s ease;
+            pointer-events: none;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(124, 58, 237, 0.5);
+            box-shadow: 0 20px 50px rgba(124, 58, 237, 0.2);
+        }
+
+        .feature-card:hover::before {
+            opacity: 1;
+        }
+
+        .feature-icon {
+            width: 64px;
+            height: 64px;
+            border-radius: 16px;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.2), rgba(212, 175, 55, 0.1));
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1) rotate(-5deg);
+            box-shadow: 0 0 20px rgba(124, 58, 237, 0.3);
+        }
+
+        .feature-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .feature-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+
+        .feature-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .feature-tag {
+            padding: 4px 12px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--card-border);
+            border-radius: 100px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        /* ========== Before/After 演示区 ========== */
+        .demo-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .demo-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: all 0.4s ease;
+        }
+
+        .demo-card:hover {
+            border-color: rgba(212, 175, 55, 0.3);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+
+        .demo-label {
+            display: inline-block;
+            padding: 6px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            border-radius: 100px;
+            margin: 20px 20px 0;
+        }
+
+        .demo-label.before {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-muted);
+            border: 1px solid var(--card-border);
+        }
+
+        .demo-label.after {
+            background: linear-gradient(135deg, var(--purple-primary), var(--purple-dark));
+            color: white;
+        }
+
+        .demo-preview {
+            height: 280px;
+            margin: 16px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .demo-preview.before-preview {
+            background: linear-gradient(135deg, #1a1a2e, #16213e);
+        }
+
+        .demo-preview.after-preview {
+            background: linear-gradient(135deg, var(--purple-dark), #1a1a2e);
+        }
+
+        .demo-preview-content {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .demo-preview-content .emoji {
+            font-size: 48px;
+            margin-bottom: 16px;
+            display: block;
+        }
+
+        .demo-preview-content .text {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        .demo-preview-content .text.highlight {
+            color: var(--gold);
+        }
+
+        .demo-info {
+            padding: 0 24px 24px;
+        }
+
+        .demo-info h4 {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .demo-info p {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .demo-metrics {
+            display: flex;
+            gap: 20px;
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .demo-metric {
+            flex: 1;
+        }
+
+        .demo-metric .value {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .demo-metric .label {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* ========== 行业解决方案 ========== */
+        .solutions-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 24px;
+        }
+
+        .solution-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 40px;
+            display: flex;
+            gap: 24px;
+            align-items: flex-start;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .solution-card::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: radial-gradient(circle, rgba(212, 175, 55, 0.08), transparent 70%);
+            pointer-events: none;
+        }
+
+        .solution-card:hover {
+            transform: translateY(-4px);
+            border-color: rgba(212, 175, 55, 0.3);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .solution-icon {
+            flex-shrink: 0;
+            width: 56px;
+            height: 56px;
+            border-radius: 14px;
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(124, 58, 237, 0.1));
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .solution-content h3 {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 10px;
+        }
+
+        .solution-content p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            line-height: 1.7;
+        }
+
+        .solution-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .solution-feature {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .solution-feature::before {
+            content: '✦';
+            color: var(--gold);
+            font-size: 12px;
+        }
+
+        /* ========== 定价区 ========== */
+        .pricing-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        .pricing-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 24px;
+            padding: 40px 32px;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(124, 58, 237, 0.4);
+            box-shadow: 0 20px 50px rgba(124, 58, 237, 0.2);
+        }
+
+        .pricing-card.featured {
+            border-color: var(--purple-primary);
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.1), rgba(212, 175, 55, 0.03));
+            box-shadow: 0 10px 40px rgba(124, 58, 237, 0.2);
+        }
+
+        .pricing-badge {
+            position: absolute;
+            top: -14px;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 4px 20px;
+            background: linear-gradient(135deg, var(--purple-primary), var(--purple-dark));
+            border-radius: 100px;
+            font-size: 12px;
+            font-weight: 600;
+            color: white;
+            white-space: nowrap;
+            box-shadow: 0 4px 15px rgba(124, 58, 237, 0.4);
+        }
+
+        .pricing-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+        }
+
+        .pricing-price {
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+
+        .pricing-price .currency {
+            font-size: 20px;
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        .pricing-price .amount {
+            font-size: 48px;
+            font-weight: 800;
+            color: var(--text-primary);
+            line-height: 1;
+        }
+
+        .pricing-price .period {
+            font-size: 15px;
+            color: var(--text-muted);
+        }
+
+        .pricing-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 28px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid var(--card-border);
+        }
+
+        .pricing-features {
+            list-style: none;
+            margin-bottom: 32px;
+        }
+
+        .pricing-features li {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 14px;
+        }
+
+        .pricing-features li::before {
+            content: '✓';
+            color: var(--gold);
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .pricing-features li.disabled {
+            color: var(--text-muted);
+            opacity: 0.5;
+        }
+
+        .pricing-features li.disabled::before {
+            content: '✕';
+            color: var(--text-muted);
+        }
+
+        .pricing-btn {
+            width: 100%;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .pricing-btn.primary {
+            background: linear-gradient(135deg, var(--purple-primary), var(--purple-dark));
+            color: white;
+            box-shadow: 0 4px 20px rgba(124, 58, 237, 0.3);
+        }
+
+        .pricing-btn.primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(124, 58, 237, 0.5);
+        }
+
+        .pricing-btn.secondary {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-primary);
+            border: 1px solid var(--card-border);
+        }
+
+        .pricing-btn.secondary:hover {
+            border-color: var(--purple-light);
+            background: rgba(124, 58, 237, 0.1);
+        }
+
+        /* ========== 客户好评 ========== */
+        .testimonials-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+
+        .testimonial-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 32px;
+            transition: all 0.4s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            position: relative;
+        }
+
+        .testimonial-card:hover {
+            border-color: rgba(212, 175, 55, 0.3);
+            transform: translateY(-4px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+        }
+
+        .testimonial-quote {
+            font-size: 60px;
+            line-height: 1;
+            color: var(--purple-primary);
+            opacity: 0.3;
+            font-family: Georgia, serif;
+            margin-bottom: -20px;
+        }
+
+        .testimonial-text {
+            font-size: 15px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 24px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .testimonial-stars {
+            display: flex;
+            gap: 2px;
+            margin-bottom: 16px;
+            color: var(--gold);
+            font-size: 16px;
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding-top: 20px;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .testimonial-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--purple-primary), var(--gold));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: white;
+            font-weight: 600;
+            flex-shrink: 0;
+        }
+
+        .testimonial-info .name {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .testimonial-info .role {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        /* ========== FAQ ========== */
+        .faq-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .faq-item {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            margin-bottom: 16px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+        }
+
+        .faq-item:hover {
+            border-color: rgba(124, 58, 237, 0.3);
+        }
+
+        .faq-item.active {
+            border-color: rgba(124, 58, 237, 0.5);
+            background: rgba(124, 58, 237, 0.05);
+        }
+
+        .faq-question {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 28px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text-primary);
+            transition: all 0.3s ease;
+        }
+
+        .faq-question:hover {
+            color: var(--gold);
+        }
+
+        .faq-icon {
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            background: rgba(124, 58, 237, 0.15);
+            font-size: 18px;
+            color: var(--purple-light);
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .faq-item.active .faq-icon {
+            transform: rotate(45deg);
+            background: var(--purple-primary);
+            color: white;
+        }
+
+        .faq-answer {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease, padding 0.4s ease;
+            padding: 0 28px;
+        }
+
+        .faq-item.active .faq-answer {
+            max-height: 300px;
+            padding: 0 28px 24px;
+        }
+
+        .faq-answer p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        /* ========== CTA 表单区 ========== */
+        .cta-section {
+            position: relative;
+            padding: 100px 32px;
+            z-index: 1;
+        }
+
+        .cta-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: linear-gradient(135deg, rgba(124, 58, 237, 0.15), rgba(212, 175, 55, 0.05));
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            border-radius: 32px;
+            padding: 60px;
+            text-align: center;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-container::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(124, 58, 237, 0.1), transparent 50%);
+            animation: cta-glow 8s ease-in-out infinite;
+            pointer-events: none;
+        }
+
+        @keyframes cta-glow {
+            0%, 100% { transform: translate(0, 0); }
+            50% { transform: translate(30px, 30px); }
+        }
+
+        .cta-container h2 {
+            font-size: 36px;
+            font-weight: 800;
+            margin-bottom: 16px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-container h2 .gradient-text {
+            background: linear-gradient(90deg, var(--gold), var(--gold-light));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .cta-container > p {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 40px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .cta-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            text-align: left;
+            position: relative;
+            z-index: 1;
+        }
+
+        .form-group {
+            position: relative;
+        }
+
+        .form-group.full {
+            grid-column: span 2;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 14px 16px;
+            background: rgba(5, 5, 16, 0.5);
+            border: 1px solid var(--card-border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.3s ease;
+            outline: none;
+            font-family: inherit;
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            border-color: var(--purple-primary);
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.15);
+            background: rgba(5, 5, 16, 0.8);
+        }
+
+        .form-input::placeholder,
+        .form-textarea::placeholder {
+            color: var(--text-muted);
+        }
+
+        .form-select {
+            cursor: pointer;
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23a0a0c0' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 16px center;
+        }
+
+        .form-select option {
+            background: var(--bg-deep);
+            color: var(--text-primary);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-submit {
+            grid-column: span 2;
+            padding: 16px;
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            background: linear-gradient(135deg, var(--purple-primary), var(--purple-dark));
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 8px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .form-submit::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.6s ease;
+        }
+
+        .form-submit:hover::before {
+            left: 100%;
+        }
+
+        .form-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(124, 58, 237, 0.5);
+        }
+
+        .form-success {
+            display: none;
+            grid-column: span 2;
+            padding: 20px;
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.3);
+            border-radius: 12px;
+            text-align: center;
+            color: #4ade80;
+            font-size: 15px;
+            font-weight: 500;
+        }
+
+        .form-success.show {
+            display: block;
+            animation: fadeInUp 0.5s ease;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* ========== 页脚 ========== */
+        .footer {
+            position: relative;
+            padding: 80px 32px 40px;
+            border-top: 1px solid var(--card-border);
+            background: rgba(5, 5, 16, 0.8);
+            z-index: 1;
+        }
+
+        .footer-container {
+            max-width: 1280px;
+            margin: 0 auto;
+        }
+
+        .footer-top {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 48px;
+            margin-bottom: 48px;
+        }
+
+        .footer-brand .logo {
+            margin-bottom: 20px;
+        }
+
+        .footer-brand p {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 24px;
+            max-width: 320px;
+        }
+
+        .footer-social {
+            display: flex;
+            gap: 12px;
+        }
+
+        .social-link {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--card-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .social-link:hover {
+            background: rgba(124, 58, 237, 0.15);
+            border-color: var(--purple-primary);
+            color: var(--purple-light);
+            transform: translateY(-2px);
+        }
+
+        .footer-col h4 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+        }
+
+        .footer-col ul {
+            list-style: none;
+        }
+
+        .footer-col ul li {
+            margin-bottom: 12px;
+        }
+
+        .footer-col ul li a {
+            font-size: 14px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-col ul li a:hover {
+            color: var(--gold);
+            padding-left: 4px;
+        }
+
+        .footer-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding-top: 32px;
+            border-top: 1px solid var(--card-border);
+        }
+
+        .footer-bottom p {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .footer-bottom .links {
+            display: flex;
+            gap: 24px;
+        }
+
+        .footer-bottom .links a {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .footer-bottom .links a:hover {
+            color: var(--gold);
+        }
+
+        /* ========== 悬浮客服按钮 ========== */
+        .chat-widget {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            z-index: 9999;
+        }
+
+        .chat-toggle {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--purple-primary), var(--purple-dark));
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            color: white;
+            box-shadow: 0 8px 30px rgba(124, 58, 237, 0.4);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .chat-toggle::before {
+            content: '';
+            position: absolute;
+            top: -3px;
+            left: -3px;
+            right: -3px;
+            bottom: -3px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--purple-primary), var(--gold));
+            z-index: -1;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .chat-toggle:hover {
+            transform: scale(1.1);
+        }
+
+        .chat-toggle:hover::before {
+            opacity: 1;
+        }
+
+        .chat-toggle .notification-dot {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 14px;
+            height: 14px;
+            background: var(--gold);
+            border-radius: 50%;
+            border: 2px solid var(--bg-deep);
+            animation: pulse-dot 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse-dot {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.3); opacity: 0.7; }
+        }
+
+        .chat-window {
+            position: absolute;
+            bottom: 80px;
+            right: 0;
+            width: 360px;
+            height: 480px;
+            background: rgba(10, 10, 26, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(124, 58, 237, 0.3);
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transform: scale(0) translateY(20px);
+            opacity: 0;
+            transform-origin: bottom right;
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+        }
+
+        .chat-window.active {
+            transform: scale(1) translateY(0);
+            opacity: 1;
+        }
+
+        .chat-header {
+            padding: 20px;
+            background: linear-gradient(135deg, var(--purple-primary), var(--purple-dark));
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chat-header-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+        }
+
+        .chat-header-info h5 {
+            font-size: 15px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .chat-header-info p {
+            font-size: 12px;
+            color: rgba(255,255,255,0.7);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .chat-header-info p::before {
+            content: '';
+            width: 8px;
+            height: 8px;
+            background: #4ade80;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        .chat-close {
+            margin-left: auto;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .chat-close:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        .chat-body {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .chat-body::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        .chat-body::-webkit-scrollbar-thumb {
+            background: rgba(124, 58, 237, 0.3);
+            border-radius: 4px;
+        }
+
+        .chat-message {
+            max-width: 80%;
+            padding: 12px 16px;
+            border-radius: 16px;
+            font-size: 14px;
+            line-height: 1.5;
+            animation: chatFadeIn 0.3s ease;
+        }
+
+        @keyframes chatFadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .chat-message.bot {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--card-border);
+            color: var(--text-primary);
+            align-self: flex-start;
+            border-bottom-left-radius: 4px;
+        }
+
+        .chat-message.user {
+            background: linear-gradient(135deg, var(--purple-primary), var(--purple-dark));
+            color: white;
+            align-self: flex-end;
+            border-bottom-right-radius: 4px;
+        }
+
+        .chat-suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            padding: 0 20px 12px;
+        }
+
+        .chat-suggestion {
+            padding: 6px 14px;
+            background: rgba(124, 58, 237, 0.1);
+            border: 1px solid rgba(124, 58, 237, 0.2);
+            border-radius: 100px;
+            font-size: 12px;
+            color: var(--purple-light);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+        }
+
+        .chat-suggestion:hover {
+            background: rgba(124, 58, 237, 0.2);
+            border-color: var(--purple-primary);
+        }
+
+        .chat-input-area {
+            padding: 16px 20px;
+            border-top: 1px solid var(--card-border);
+            display: flex;
+            gap: 10px;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px 16px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--card-border);
+            border-radius: 100px;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
+
+        .chat-input:focus {
+            border-color: var(--purple-primary);
+            background: rgba(255,255,255,0.08);
+        }
+
+        .chat-send {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--purple-primary), var(--purple-dark));
+            border: none;
+            cursor: pointer;
+            color: white;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            flex-shrink: 0;
+        }
+
+        .chat-send:hover {
+            transform: scale(1.1);
+        }
+
+        /* ========== 响应式适配 ========== */
+        @media (max-width: 1024px) {
+            .hero h1 { font-size: 42px; }
+            .section-title { font-size: 34px; }
+            .features-grid { grid-template-columns: repeat(2, 1fr); }
+            .testimonials-grid { grid-template-columns: repeat(2, 1fr); }
+            .footer-top { grid-template-columns: 1fr 1fr; gap: 32px; }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .nav-right .btn-login,
+            .nav-right .btn-primary { display: none; }
+            .hamburger { display: flex; }
+            
+            .hero { padding: 100px 20px 60px; }
+            .hero-container { grid-template-columns: 1fr; gap: 40px; text-align: center; }
+            .hero h1 { font-size: 32px; }
+            .hero-subtitle { font-size: 15px; margin: 0 auto 32px; }
+            .hero-cta { justify-content: center; flex-wrap: wrap; }
+            .hero-stats { justify-content: center; gap: 24px; }
+            .stat-number { font-size: 28px; }
+            
+            .section { padding: 60px 20px; }
+            .section-title { font-size: 28px; }
+            .section-subtitle { font-size: 15px; }
+            
+            .features-grid { grid-template-columns: 1fr; }
+            .demo-container { grid-template-columns: 1fr; }
+            .solutions-grid { grid-template-columns: 1fr; }
+            .solution-card { flex-direction: column; }
+            .pricing-grid { grid-template-columns: 1fr; }
+            .testimonials-grid { grid-template-columns: 1fr; }
+            
+            .cta-container { padding: 40px 24px; }
+            .cta-container h2 { font-size: 26px; }
+            .cta-form { grid-template-columns: 1fr; }
+            .form-group.full { grid-column: span 1; }
+            .form-submit { grid-column: span 1; }
+            
+            .footer-top { grid-template-columns: 1fr; gap: 32px; }
+            .footer-bottom { flex-direction: column; gap: 16px; text-align: center; }
+            
+            .chat-window { width: calc(100vw - 40px); right: -12px; }
+            .chat-widget { bottom: 20px; right: 20px; }
+            
+            .nav-inner { padding: 0 20px; }
+            .lang-switcher { display: none; }
+        }
+
+        @media (max-width: 480px) {
+            .hero h1 { font-size: 26px; }
+            .hero-cta { flex-direction: column; width: 100%; }
+            .hero-cta button { width: 100%; }
+            .hero-stats { flex-direction: column; gap: 20px; }
+            .section-title { font-size: 24px; }
+            .feature-card { padding: 24px; }
+            .pricing-card { padding: 32px 24px; }
+            .cta-container { padding: 32px 20px; }
+        }
+
+        /* ========== 滚动渐入动画 ========== */
+        .fade-in-up {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s ease, transform 0.8s ease;
+        }
+
+        .fade-in-up.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ========== 滚动条 ========== */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg-deep);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, var(--purple-primary), var(--purple-dark));
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, var(--purple-light), var(--purple-primary));
+        }
+
+        /* ========== 选中文本 ========== */
+        ::selection {
+            background: rgba(124, 58, 237, 0.3);
+            color: var(--gold);
+        }
     </style>
-    <script type="module" crossorigin src="./assets/index-BAnWm_95.js"></script>
-    <link rel="stylesheet" crossorigin href="./assets/index-DHH05elM.css">
-  </head>
-  <body>
-    <!-- Preloader -->
-    <div id="preloader">
-      <div class="preloader-inner">
-        <svg class="preloader-taiji" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle cx="30" cy="30" r="28" stroke="#7c3aed" stroke-width="1"/>
-          <path d="M30 2 A28 28 0 0 1 30 58 A14 14 0 0 1 30 30 A14 14 0 0 0 30 2Z" fill="#7c3aed" opacity="0.7"/>
-          <circle cx="30" cy="16" r="6" fill="#d4af37" opacity="0.8"/>
-          <circle cx="30" cy="44" r="6" fill="#1a0a2e"/>
-          <circle cx="30" cy="16" r="3" fill="#1a0a2e"/>
-          <circle cx="30" cy="44" r="3" fill="#d4af37" opacity="0.8"/>
-        </svg>
-        <div class="preloader-text">玄咪 AI · LOADING</div>
-      </div>
+</head>
+<body>
+
+    <!-- 星空粒子背景 -->
+    <div class="starfield" id="starfield"></div>
+    
+    <!-- 太极旋转背景 -->
+    <div class="taiji-bg"></div>
+
+    <!-- ==================== 导航栏 ==================== -->
+    <nav class="navbar" id="navbar">
+        <div class="nav-inner">
+            <a href="#" class="logo">
+                <div class="logo-icon">玄</div>
+                <span class="logo-text">NexusMeta</span>
+            </a>
+            <ul class="nav-links">
+                <li><a href="#features">核心功能</a></li>
+                <li><a href="#demo">效果演示</a></li>
+                <li><a href="#solutions">行业方案</a></li>
+                <li><a href="#pricing">定价套餐</a></li>
+                <li><a href="#testimonials">客户评价</a></li>
+                <li><a href="#faq">常见问题</a></li>
+            </ul>
+            <div class="nav-right">
+                <div class="lang-switcher">
+                    <button class="lang-btn active" data-lang="zh">中</button>
+                    <button class="lang-btn" data-lang="en">EN</button>
+                    <button class="lang-btn" data-lang="tw">繁</button>
+                </div>
+                <button class="btn-login" onclick="openModal('login')">登录</button>
+                <button class="btn-primary" onclick="openModal('register')">免费开始</button>
+                <button class="hamburger" id="hamburger">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 移动端菜单 -->
+    <div class="mobile-menu" id="mobileMenu">
+        <a href="#features">核心功能</a>
+        <a href="#demo">效果演示</a>
+        <a href="#solutions">行业方案</a>
+        <a href="#pricing">定价套餐</a>
+        <a href="#testimonials">客户评价</a>
+        <a href="#faq">常见问题</a>
+        <div class="mobile-btns">
+            <button class="btn-login" style="flex:1" onclick="openModal('login')">登录</button>
+            <button class="btn-primary" style="flex:1" onclick="openModal('register')">免费开始</button>
+        </div>
     </div>
 
-    <div id="root"></div>
+    <!-- ==================== Hero 区域 ==================== -->
+    <section class="hero" id="hero">
+        <div class="hero-container">
+            <div class="hero-left">
+                <div class="hero-badge">
+                    <span class="dot"></span>
+                    <span>AI + 玄学文化，引领出海新浪潮</span>
+                </div>
+                <h1>
+                    <span class="gradient-text">玄学文化出海</span><br>
+                    <span class="highlight">AI</span>一站式解决方案
+                </h1>
+                <p class="hero-subtitle">
+                    融合人工智能与传统玄学智慧，为命理师、MCN机构、文化出海品牌提供数字人生成、多语言翻译、命理咨询大模型、短视频批量创作等全链路AI工具，让东方玄学智慧走向世界。
+                </p>
+                <div class="hero-cta">
+                    <button class="btn-cta-primary" onclick="openModal('register')">免费开始创作</button>
+                    <button class="btn-cta-secondary" onclick="openModal('bazi')">免费体验命理</button>
+                </div>
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <div class="stat-number">1.2亿</div>
+                        <div class="stat-label">海外华人市场</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">50+</div>
+                        <div class="stat-label">命理从业者</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">10种</div>
+                        <div class="stat-label">语言支持</div>
+                    </div>
+                </div>
+            </div>
+            <div class="hero-right">
+                <div class="dashboard-mockup">
+                    <div class="dashboard-header">
+                        <div class="dashboard-title">玄咪AI 控制台</div>
+                        <div class="dashboard-dots">
+                            <span style="background:#ff5f57"></span>
+                            <span style="background:#febc2e"></span>
+                            <span style="background:#28c840"></span>
+                        </div>
+                    </div>
+                    <div class="dashboard-body">
+                        <div class="dashboard-card">
+                            <div class="dashboard-card-title">今日咨询量</div>
+                            <div class="dashboard-card-value">1,287</div>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="dashboard-card-title">AI数字人活跃</div>
+                            <div class="dashboard-card-value purple">36</div>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="dashboard-card-title">视频生成数</div>
+                            <div class="dashboard-card-value">452</div>
+                        </div>
+                        <div class="dashboard-card">
+                            <div class="dashboard-card-title">多语言覆盖</div>
+                            <div class="dashboard-card-value purple">10</div>
+                        </div>
+                        <div class="dashboard-chart">
+                            <div class="chart-bar" style="animation-delay:0s"></div>
+                            <div class="chart-bar" style="animation-delay:0.2s"></div>
+                            <div class="chart-bar" style="animation-delay:0.4s"></div>
+                            <div class="chart-bar" style="animation-delay:0.6s"></div>
+                            <div class="chart-bar" style="animation-delay:0.8s"></div>
+                            <div class="chart-bar" style="animation-delay:1s"></div>
+                            <div class="chart-bar" style="animation-delay:1.2s"></div>
+                            <div class="chart-bar" style="animation-delay:1.4s"></div>
+                        </div>
+                        <div class="dashboard-card" style="grid-column:span 2">
+                            <div class="dashboard-avatar">
+                                <div class="avatar-circle">师</div>
+                                <div class="avatar-info">
+                                    <div class="name">玄机大师 · AI数字人</div>
+                                    <div class="role">在线服务中 · 英语/日语/中文</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 客户 Logo 墙 ==================== -->
+    <section class="logo-wall-section">
+        <p class="logo-wall-title">深受全球玄学机构信赖</p>
+        <div class="logo-scroll">
+            <div class="logo-track" id="logoTrack">
+                <div class="logo-item"><div class="icon">紫</div>紫微坊</div>
+                <div class="logo-item"><div class="icon">易</div>易道研究院</div>
+                <div class="logo-item"><div class="icon">玄</div>玄机堂</div>
+                <div class="logo-item"><div class="icon">天</div>天机阁</div>
+                <div class="logo-item"><div class="icon">命</div>命理天下</div>
+                <div class="logo-item"><div class="icon">风</div>风水云学院</div>
+                <div class="logo-item"><div class="icon">星</div>星辰命理</div>
+                <div class="logo-item"><div class="icon">道</div>道法自然MCN</div>
+                <!-- 重复一遍以实现无缝滚动 -->
+                <div class="logo-item"><div class="icon">紫</div>紫微坊</div>
+                <div class="logo-item"><div class="icon">易</div>易道研究院</div>
+                <div class="logo-item"><div class="icon">玄</div>玄机堂</div>
+                <div class="logo-item"><div class="icon">天</div>天机阁</div>
+                <div class="logo-item"><div class="icon">命</div>命理天下</div>
+                <div class="logo-item"><div class="icon">风</div>风水云学院</div>
+                <div class="logo-item"><div class="icon">星</div>星辰命理</div>
+                <div class="logo-item"><div class="icon">道</div>道法自然MCN</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 核心功能 ==================== -->
+    <section class="section" id="features">
+        <div class="section-container">
+            <div class="section-header fade-in-up">
+                <span class="section-tag">CORE FEATURES</span>
+                <h2 class="section-title">六大核心<span class="gradient-text">AI功能模块</span></h2>
+                <p class="section-subtitle">从数字人生成到命理咨询，从多语言翻译到短视频批量创作，全链路赋能玄学文化出海</p>
+            </div>
+            <div class="features-grid">
+                <div class="feature-card fade-in-up">
+                    <div class="feature-icon">🧙</div>
+                    <h3 class="feature-title">AI玄学数字人</h3>
+                    <p class="feature-desc">一键生成专属玄学数字人形象，支持自定义服装、场景、语音风格。24小时不间断直播，与观众实时互动解答命理问题。</p>
+                    <div class="feature-tags">
+                        <span class="feature-tag">数字分身</span>
+                        <span class="feature-tag">24h直播</span>
+                        <span class="feature-tag">实时互动</span>
+                    </div>
+                    <button class="feature-btn" onclick="openModal('register')">免费开始</button>
+                </div>
+                <div class="feature-card fade-in-up">
+                    <div class="feature-icon">🌐</div>
+                    <h3 class="feature-title">多语言玄学翻译</h3>
+                    <p class="feature-desc">专业玄学术语库覆盖70种语言，精准翻译八字、风水、塔罗等内容，保留东方哲学意境，让海外用户零障碍理解。</p>
+                    <div class="feature-tags">
+                        <span class="feature-tag">70种语言</span>
+                        <span class="feature-tag">术语库</span>
+                        <span class="feature-tag">文化适配</span>
+                    </div>
+                    <button class="feature-btn" onclick="openModal('translate')">立即体验</button>
+                </div>
+                <div class="feature-card fade-in-up">
+                    <div class="feature-icon">🔮</div>
+                    <h3 class="feature-title">命理大模型咨询</h3>
+                    <p class="feature-desc">基于亿级命理数据训练的专属大模型，支持八字、紫微斗数、塔罗、占星等多种命理体系，提供个性化咨询报告。</p>
+                    <div class="feature-tags">
+                        <span class="feature-tag">八字分析</span>
+                        <span class="feature-tag">紫微斗数</span>
+                        <span class="feature-tag">塔罗占星</span>
+                    </div>
+                    <button class="feature-btn" onclick="openModal('bazi')">免费测算</button>
+                </div>
+                <div class="feature-card fade-in-up">
+                    <div class="feature-icon">🎬</div>
+                    <h3 class="feature-title">玄学短视频批量生成</h3>
+                    <p class="feature-desc">输入主题关键词，AI自动生成玄学短视频脚本、配音、字幕、画面，单日可产出100+条优质内容，全平台一键分发。</p>
+                    <div class="feature-tags">
+                        <span class="feature-tag">批量产出</span>
+                        <span class="feature-tag">自动剪辑</span>
+                        <span class="feature-tag">一键分发</span>
+                    </div>
+                    <button class="feature-btn" onclick="openModal('register')">免费开始</button>
+                </div>
+                <div class="feature-card fade-in-up">
+                    <div class="feature-icon">🎙️</div>
+                    <h3 class="feature-title">大师音色克隆</h3>
+                    <p class="feature-desc">3分钟音频样本即可克隆大师专属音色，支持多语言合成。让大师声音跨越语言障碍，服务全球华人及外国用户。</p>
+                    <div class="feature-tags">
+                        <span class="feature-tag">3分钟克隆</span>
+                        <span class="feature-tag">多语言合成</span>
+                        <span class="feature-tag">情感还原</span>
+                    </div>
+                    <button class="feature-btn" onclick="openModal('register')">免费开始</button>
+                </div>
+                <div class="feature-card fade-in-up">
+                    <div class="feature-icon">🏯</div>
+                    <h3 class="feature-title">风水图像分析</h3>
+                    <p class="feature-desc">上传房屋户型图或实景照片，AI自动识别风水格局，生成详细风水分析报告及调理建议。支持住宅、办公、商业场景。</p>
+                    <div class="feature-tags">
+                        <span class="feature-tag">户型识别</span>
+                        <span class="feature-tag">风水报告</span>
+                        <span class="feature-tag">调理建议</span>
+                    </div>
+                    <button class="feature-btn" onclick="openModal('fengshui')">立即体验</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== Before/After 演示区 ==================== -->
+    <section class="section" id="demo" style="background: rgba(10, 10, 26, 0.3);">
+        <div class="section-container">
+            <div class="section-header fade-in-up">
+                <span class="section-tag">BEFORE & AFTER</span>
+                <h2 class="section-title">产品<span class="gradient-text">效果演示</span></h2>
+                <p class="section-subtitle">看看AI如何将传统玄学内容转化为面向海外用户的专业级数字产品</p>
+            </div>
+            <div class="demo-container">
+                <div class="demo-card fade-in-up">
+                    <div class="demo-label before">传统方式 Before</div>
+                    <div class="demo-preview before-preview">
+                        <div class="demo-preview-content">
+                            <span class="emoji">📝</span>
+                            <p class="text">纯文字命理笔记<br>手动翻译，耗时耗力<br>语言障碍，难以传播<br>效率低下，覆盖有限</p>
+                        </div>
+                    </div>
+                    <div class="demo-info">
+                        <h4>传统命理服务模式</h4>
+                        <p>依赖线下或一对一线上咨询，内容创作靠手动，海外推广困难，难以规模化。</p>
+                        <div class="demo-metrics">
+                            <div class="demo-metric">
+                                <div class="value">5h</div>
+                                <div class="label">单条内容耗时</div>
+                            </div>
+                            <div class="demo-metric">
+                                <div class="value">1种</div>
+                                <div class="label">语言覆盖</div>
+                            </div>
+                            <div class="demo-metric">
+                                <div class="value">低</div>
+                                <div class="label">传播效率</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="demo-card fade-in-up">
+                    <div class="demo-label after">AI赋能 After</div>
+                    <div class="demo-preview after-preview">
+                        <div class="demo-preview-content">
+                            <span class="emoji">✨</span>
+                            <p class="text">
+                                <span class="text highlight">AI数字人 + 多语言短视频</span><br>
+                                自动翻译10种语言<br>
+                                批量生成专业内容<br>
+                                全球分发，高效触达
+                            </p>
+                        </div>
+                    </div>
+                    <div class="demo-info">
+                        <h4>AI赋能后的模式</h4>
+                        <p>数字人24小时直播，短视频批量生成，多语言自动翻译，全球用户触手可及。</p>
+                        <div class="demo-metrics">
+                            <div class="demo-metric">
+                                <div class="value">5min</div>
+                                <div class="label">单条内容耗时</div>
+                            </div>
+                            <div class="demo-metric">
+                                <div class="value">10种</div>
+                                <div class="label">语言覆盖</div>
+                            </div>
+                            <div class="demo-metric">
+                                <div class="value">60x</div>
+                                <div class="label">效率提升</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 行业解决方案 ==================== -->
+    <section class="section" id="solutions">
+        <div class="section-container">
+            <div class="section-header fade-in-up">
+                <span class="section-tag">INDUSTRY SOLUTIONS</span>
+                <h2 class="section-title">四大行业<span class="gradient-text">解决方案</span></h2>
+                <p class="section-subtitle">针对不同玄学行业场景，提供定制化AI赋能方案</p>
+            </div>
+            <div class="solutions-grid">
+                <div class="solution-card fade-in-up">
+                    <div class="solution-icon">👤</div>
+                    <div class="solution-content">
+                        <h3>个人命理师</h3>
+                        <p>为独立命理师打造个人AI品牌，数字人代替本人出镜，音色克隆保留个人特色，大幅提升服务效率和收入。</p>
+                        <div class="solution-features">
+                            <span class="solution-feature">个人数字分身</span>
+                            <span class="solution-feature">音色克隆</span>
+                            <span class="solution-feature">自动排期</span>
+                            <span class="solution-feature">多平台分发</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="solution-card fade-in-up">
+                    <div class="solution-icon">📡</div>
+                    <div class="solution-content">
+                        <h3>玄学MCN机构</h3>
+                        <p>批量管理多个命理师IP，矩阵式内容生产，统一数据分析后台，实现规模化运营和商业变现。</p>
+                        <div class="solution-features">
+                            <span class="solution-feature">矩阵账号管理</span>
+                            <span class="solution-feature">批量内容生成</span>
+                            <span class="solution-feature">数据看板</span>
+                            <span class="solution-feature">商业变现</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="solution-card fade-in-up">
+                    <div class="solution-icon">🎓</div>
+                    <div class="solution-content">
+                        <h3>玄学培训机构</h3>
+                        <p>AI辅助教学，数字人助教24小时答疑，多语言课程自动生成，让玄学教育突破地域和语言限制。</p>
+                        <div class="solution-features">
+                            <span class="solution-feature">AI助教</span>
+                            <span class="solution-feature">多语言课程</span>
+                            <span class="solution-feature">智能答疑</span>
+                            <span class="solution-feature">学习追踪</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="solution-card fade-in-up">
+                    <div class="solution-icon">🌍</div>
+                    <div class="solution-content">
+                        <h3>传统文化出海品牌</h3>
+                        <p>为文化出海品牌提供玄学内容营销支持，AI生成多语言内容，数字人代言，助力品牌全球化传播。</p>
+                        <div class="solution-features">
+                            <span class="solution-feature">多语言营销</span>
+                            <span class="solution-feature">数字人代言</span>
+                            <span class="solution-feature">文化适配</span>
+                            <span class="solution-feature">全球分发</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 定价套餐 ==================== -->
+    <section class="section" id="pricing" style="background: rgba(10, 10, 26, 0.3);">
+        <div class="section-container">
+            <div class="section-header fade-in-up">
+                <span class="section-tag">PRICING PLANS</span>
+                <h2 class="section-title">选择适合你的<span class="gradient-text">套餐方案</span></h2>
+                <p class="section-subtitle">灵活的定价方案，满足个人命理师到大型机构的不同需求</p>
+            </div>
+            <div class="pricing-grid">
+                <div class="pricing-card fade-in-up">
+                    <div class="pricing-name">入门版</div>
+                    <div class="pricing-price">
+                        <span class="currency">¥</span>
+                        <span class="amount">299</span>
+                        <span class="period">/月</span>
+                    </div>
+                    <p class="pricing-desc">适合个人命理师入门体验</p>
+                    <ul class="pricing-features">
+                        <li>1个AI数字人形象</li>
+                        <li>每月50条短视频生成</li>
+                        <li>3种语言翻译支持</li>
+                        <li>基础命理大模型咨询</li>
+                        <li>音色克隆（1个）</li>
+                        <li>社区技术支持</li>
+                        <li class="disabled">批量内容分发</li>
+                        <li class="disabled">专属客户经理</li>
+                    </ul>
+                    <button class="pricing-btn secondary" onclick="openModal('register', 'starter')">选择入门版</button>
+                </div>
+                <div class="pricing-card featured fade-in-up">
+                    <div class="pricing-badge">最受欢迎</div>
+                    <div class="pricing-name">专业版</div>
+                    <div class="pricing-price">
+                        <span class="currency">¥</span>
+                        <span class="amount">899</span>
+                        <span class="period">/月</span>
+                    </div>
+                    <p class="pricing-desc">适合专业命理师和小型工作室</p>
+                    <ul class="pricing-features">
+                        <li>5个AI数字人形象</li>
+                        <li>每月300条短视频生成</li>
+                        <li>10种语言翻译支持</li>
+                        <li>高级命理大模型咨询</li>
+                        <li>音色克隆（5个）</li>
+                        <li>风水图像分析功能</li>
+                        <li>全平台一键分发</li>
+                        <li>优先技术支持</li>
+                    </ul>
+                    <button class="pricing-btn primary" onclick="openModal('register', 'pro')">选择专业版</button>
+                </div>
+                <div class="pricing-card fade-in-up">
+                    <div class="pricing-name">企业版</div>
+                    <div class="pricing-price">
+                        <span class="currency">¥</span>
+                        <span class="amount">2999</span>
+                        <span class="period">/月</span>
+                    </div>
+                    <p class="pricing-desc">适合MCN机构和大型企业</p>
+                    <ul class="pricing-features">
+                        <li>无限AI数字人形象</li>
+                        <li>无限短视频生成</li>
+                        <li>全语言翻译支持</li>
+                        <li>定制命理大模型</li>
+                        <li>无限音色克隆</li>
+                        <li>高级风水分析+API</li>
+                        <li>矩阵账号管理后台</li>
+                        <li>专属客户经理+SLA</li>
+                    </ul>
+                    <button class="pricing-btn secondary" onclick="openModal('contact')">联系销售</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== 客户好评 ==================== -->
+    <section class="section" id="testimonials">
+        <div class="section-container">
+            <div class="section-header fade-in-up">
+                <span class="section-tag">TESTIMONIALS</span>
+                <h2 class="section-title">客户的<span class="gradient-text">真实评价</span></h2>
+                <p class="section-subtitle">超过50+命理从业者的共同选择，听听他们怎么说</p>
+            </div>
+            <div class="testimonials-grid">
+                <div class="testimonial-card fade-in-up">
+                    <div class="testimonial-quote">"</div>
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">使用玄咪AI后，我的命理咨询效率提升了10倍。数字人可以24小时接待客户，多语言翻译让我接到了很多海外订单，收入翻了好几番。</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">李</div>
+                        <div class="testimonial-info">
+                            <div class="name">李道明</div>
+                            <div class="role">资深八字命理师</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card fade-in-up">
+                    <div class="testimonial-quote">"</div>
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">作为MCN机构，我们需要管理大量命理师IP。NexusMeta的矩阵管理功能太方便了，一键批量生成内容，数据看板一目了然，运营成本大幅降低。</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">王</div>
+                        <div class="testimonial-info">
+                            <div class="name">王紫涵</div>
+                            <div class="role">玄机堂MCN 创始人</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card fade-in-up">
+                    <div class="testimonial-quote">"</div>
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">音色克隆功能太惊艳了！只录了3分钟音频，AI就能用我的声音说英语和日语。海外粉丝听到我用他们的语言讲风水，都觉得不可思议。</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">张</div>
+                        <div class="testimonial-info">
+                            <div class="name">张玄机</div>
+                            <div class="role">风水顾问 / 内容创作者</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card fade-in-up">
+                    <div class="testimonial-quote">"</div>
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">我们培训机构用AI助教功能后，学员满意度大幅提升。24小时在线答疑，多语言课程让东南亚和欧美的学生都能学习，招生量增长了300%。</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">陈</div>
+                        <div class="testimonial-info">
+                            <div class="name">陈天机</div>
+                            <div class="role">易道研究院 院长</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card fade-in-up">
+                    <div class="testimonial-quote">"</div>
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">风水图像分析功能非常专业。客户上传户型图后，AI几秒钟就能出详细的风水报告，比人工分析快太多了，而且建议很到位，客户非常满意。</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">刘</div>
+                        <div class="testimonial-info">
+                            <div class="name">刘星辰</div>
+                            <div class="role">星辰命理 创始人</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-card fade-in-up">
+                    <div class="testimonial-quote">"</div>
+                    <div class="testimonial-stars">★★★★★</div>
+                    <p class="testimonial-text">短视频批量生成功能是真正的游戏规则改变者。以前一天做1条视频，现在一天能做100条，而且质量稳定。全平台分发后，粉丝量暴涨。</p>
+                    <div class="testimonial-author">
+                        <div class="testimonial-avatar">赵</div>
+                        <div class="testimonial-info">
+                            <div class="name">赵紫微</div>
+                            <div class="role">个人命理博主</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== FAQ ==================== -->
+    <section class="section" id="faq" style="background: rgba(10, 10, 26, 0.3);">
+        <div class="section-container">
+            <div class="section-header fade-in-up">
+                <span class="section-tag">FAQ</span>
+                <h2 class="section-title">常见<span class="gradient-text">问题解答</span></h2>
+                <p class="section-subtitle">关于玄咪AI NexusMeta，你想了解的都在这里</p>
+            </div>
+            <div class="faq-container">
+                <div class="faq-item fade-in-up">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>玄咪AI NexusMeta适合什么类型的用户使用？</span>
+                        <div class="faq-icon">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>我们的平台适合所有玄学文化领域的从业者，包括个人命理师、风水师、塔罗师、占星师，以及玄学MCN机构、培训机构和传统文化出海品牌。无论你是刚入行的新手还是资深大师，都能找到适合的方案。</p>
+                    </div>
+                </div>
+                <div class="faq-item fade-in-up">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>AI生成的命理内容是否专业准确？</span>
+                        <div class="faq-icon">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>我们的命理大模型基于亿级专业命理数据训练，涵盖八字、紫微斗数、风水、塔罗、占星等多个体系，并经过50+资深命理师验证校准。AI生成的内容专业度高，同时支持大师人工审核修改，确保准确性。</p>
+                    </div>
+                </div>
+                <div class="faq-item fade-in-up">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>多语言翻译支持哪些语言？翻译质量如何？</span>
+                        <div class="faq-icon">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>目前支持中文（简/繁）、英语、日语、韩语、越南语、泰语、法语、德语、西班牙语、葡萄牙语共10种语言。我们拥有专业的玄学术语库，能精准翻译命理专业术语，同时保留东方哲学的文化意境。</p>
+                    </div>
+                </div>
+                <div class="faq-item fade-in-up">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>音色克隆需要多少音频样本？是否安全？</span>
+                        <div class="faq-icon">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>只需3分钟清晰的音频样本即可完成音色克隆。我们采用加密存储和严格的权限管理，确保音色数据安全。音色仅限本人授权使用，不会未经许可用于其他用途，严格遵守相关法律法规。</p>
+                    </div>
+                </div>
+                <div class="faq-item fade-in-up">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>是否提供免费试用？如何收费？</span>
+                        <div class="faq-icon">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>我们提供7天免费试用期，无需绑定支付信息。试用期间可以体验大部分功能。正式订阅分为入门版（¥299/月）、专业版（¥899/月）和企业版（¥2999/月）三档，支持按月或按年付费，年付享受8折优惠。</p>
+                    </div>
+                </div>
+                <div class="faq-item fade-in-up">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>AI数字人直播是否被平台允许？</span>
+                        <div class="faq-icon">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>我们密切关注各大平台政策，目前抖音、快手、TikTok、YouTube等主流平台均允许合规的AI数字人直播。我们的数字人都会标注"AI生成"标识，完全符合平台规范。同时我们提供实时互动功能，确保直播内容质量。</p>
+                    </div>
+                </div>
+                <div class="faq-item fade-in-up">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>如何保障我的数据和隐私安全？</span>
+                        <div class="faq-icon">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>我们采用银行级加密技术保护用户数据，通过ISO 27001信息安全认证。所有数据存储在境内合规云服务器，严格遵守《数据安全法》和《个人信息保护法》。用户可随时导出或删除自己的数据。</p>
+                    </div>
+                </div>
+                <div class="faq-item fade-in-up">
+                    <div class="faq-question" onclick="toggleFAQ(this)">
+                        <span>是否提供API接口供开发者集成？</span>
+                        <div class="faq-icon">+</div>
+                    </div>
+                    <div class="faq-answer">
+                        <p>企业版用户可使用完整的API接口，包括数字人生成、命理咨询、多语言翻译、音色合成、风水分析等所有核心功能。我们提供详细的API文档和技术支持，方便企业将AI能力集成到自有系统中。</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==================== CTA 表单区 ==================== -->
+    <section class="cta-section" id="cta-form-section">
+        <div class="cta-container">
+            <h2>立即开启你的<span class="gradient-text">玄学AI之旅</span></h2>
+            <p>填写下方表单，我们的顾问将在24小时内联系您，提供一对一咨询和产品演示</p>
+            <form class="cta-form" id="ctaForm" onsubmit="handleSubmit(event)">
+                <div class="form-group">
+                    <label class="form-label">姓名 *</label>
+                    <input type="text" class="form-input" name="name" placeholder="请输入您的姓名" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">公司/机构 *</label>
+                    <input type="text" class="form-input" name="company" placeholder="请输入公司或机构名称" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">联系电话 *</label>
+                    <input type="tel" class="form-input" name="phone" placeholder="请输入手机号码" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">需求类型 *</label>
+                    <select class="form-select" name="type" required>
+                        <option value="">请选择需求类型</option>
+                        <option value="personal">个人命理师服务</option>
+                        <option value="mcn">MCN机构合作</option>
+                        <option value="training">培训机构合作</option>
+                        <option value="brand">文化出海品牌</option>
+                        <option value="other">其他需求</option>
+                    </select>
+                </div>
+                <div class="form-group full">
+                    <label class="form-label">需求描述（选填）</label>
+                    <textarea class="form-textarea" name="description" placeholder="请简要描述您的需求或问题..."></textarea>
+                </div>
+                <div class="form-success" id="formSuccess">
+                    ✅ 提交成功！我们的顾问将在24小时内与您联系，请保持电话畅通。
+                </div>
+                <button type="submit" class="form-submit" id="formSubmitBtn">提交咨询请求</button>
+            </form>
+        </div>
+    </section>
+
+    <!-- ==================== 页脚 ==================== -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-top">
+                <div class="footer-brand">
+                    <a href="#" class="logo">
+                        <div class="logo-icon">玄</div>
+                        <span class="logo-text">NexusMeta</span>
+                    </a>
+                    <p>玄咪AI NexusMeta —— 融合人工智能与传统玄学智慧，为玄学文化出海提供全链路AI解决方案，让东方智慧走向世界。</p>
+                    <div class="footer-social">
+                        <a href="#" class="social-link" title="微信">微</a>
+                        <a href="#" class="social-link" title="微博">博</a>
+                        <a href="#" class="social-link" title="抖音">抖</a>
+                        <a href="#" class="social-link" title="YouTube">YT</a>
+                        <a href="#" class="social-link" title="Twitter">X</a>
+                    </div>
+                </div>
+                <div class="footer-col">
+                    <h4>产品功能</h4>
+                    <ul>
+                        <li><a href="#features">AI玄学数字人</a></li>
+                        <li><a href="#features">多语言翻译</a></li>
+                        <li><a href="#features">命理大模型</a></li>
+                        <li><a href="#features">短视频生成</a></li>
+                        <li><a href="#features">音色克隆</a></li>
+                        <li><a href="#features">风水图像分析</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>解决方案</h4>
+                    <ul>
+                        <li><a href="#solutions">个人命理师</a></li>
+                        <li><a href="#solutions">MCN机构</a></li>
+                        <li><a href="#solutions">培训机构</a></li>
+                        <li><a href="#solutions">出海品牌</a></li>
+                        <li><a href="#pricing">定价方案</a></li>
+                        <li><a href="#faq">常见问题</a></li>
+                    </ul>
+                </div>
+                <div class="footer-col">
+                    <h4>关于我们</h4>
+                    <ul>
+                        <li><a href="#">公司介绍</a></li>
+                        <li><a href="#">加入我们</a></li>
+                        <li><a href="#">联系方式</a></li>
+                        <li><a href="#">隐私政策</a></li>
+                        <li><a href="#">服务条款</a></li>
+                        <li><a href="#">API文档</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>© 2026 玄咪AI NexusMeta. All rights reserved. 沪ICP备2026XXXXXX号</p>
+                <div class="links">
+                    <a href="#">隐私政策</a>
+                    <a href="#">服务条款</a>
+                    <a href="#">Cookie设置</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- ==================== 悬浮客服按钮 ==================== -->
+    <div class="chat-widget">
+        <div class="chat-window" id="chatWindow">
+            <div class="chat-header">
+                <div class="chat-header-avatar">玄</div>
+                <div class="chat-header-info">
+                    <h5>玄咪AI助手</h5>
+                    <p>在线 · 随时为您服务</p>
+                </div>
+                <button class="chat-close" id="chatClose">✕</button>
+            </div>
+            <div class="chat-body" id="chatBody">
+                <div class="chat-message bot">您好！欢迎来到玄咪AI NexusMeta 👋 我是AI助手，有什么可以帮您的吗？</div>
+            </div>
+            <div class="chat-suggestions">
+                <div class="chat-suggestion" onclick="sendSuggestion('如何开始使用？')">如何开始使用？</div>
+                <div class="chat-suggestion" onclick="sendSuggestion('价格是多少？')">价格是多少？</div>
+                <div class="chat-suggestion" onclick="sendSuggestion('支持哪些语言？')">支持哪些语言？</div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="chatInput" placeholder="输入消息..." onkeypress="handleChatKeyPress(event)">
+                <button class="chat-send" id="chatSend" onclick="sendMessage()">➤</button>
+            </div>
+        </div>
+        <button class="chat-toggle" id="chatToggle">
+            💬
+            <span class="notification-dot"></span>
+        </button>
+    </div>
+
     <script>
-      window.addEventListener('load', function() {
-        setTimeout(function() {
-          var pl = document.getElementById('preloader');
-          if (pl) {
-            pl.classList.add('fade-out');
-            setTimeout(function() { pl.remove(); }, 500);
-          }
-        }, 800);
-      });
+        // ========== 星空粒子生成 ==========
+        function createStarfield() {
+            const starfield = document.getElementById('starfield');
+            const starCount = 150;
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                const size = Math.random() * 2 + 1;
+                star.style.width = size + 'px';
+                star.style.height = size + 'px';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.setProperty('--duration', (Math.random() * 3 + 2) + 's');
+                star.style.setProperty('--opacity', (Math.random() * 0.6 + 0.4));
+                star.style.animationDelay = Math.random() * 3 + 's';
+                starfield.appendChild(star);
+            }
+        }
+        createStarfield();
+
+        // ========== 导航栏滚动效果 ==========
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // ========== 移动端汉堡菜单 ==========
+        const hamburger = document.getElementById('hamburger');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        hamburger.addEventListener('click', function() {
+            hamburger.classList.toggle('active');
+            mobileMenu.classList.toggle('active');
+        });
+
+        // 点击移动端菜单链接后关闭菜单
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', function() {
+                hamburger.classList.remove('active');
+                mobileMenu.classList.remove('active');
+            });
+        });
+
+        // ========== 语言切换 ==========
+        const langBtns = document.querySelectorAll('.lang-btn');
+        langBtns.forEach(btn => {
+            btn.addEventListener('click', function() {
+                langBtns.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+            });
+        });
+
+        // ========== FAQ 手风琴 ==========
+        function toggleFAQ(element) {
+            const item = element.parentElement;
+            const isActive = item.classList.contains('active');
+            
+            // 关闭所有
+            document.querySelectorAll('.faq-item').forEach(i => {
+                i.classList.remove('active');
+            });
+            
+            // 打开当前
+            if (!isActive) {
+                item.classList.add('active');
+            }
+        }
+
+        // ========== 滚动渐入动画 ==========
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, observerOptions);
+
+        document.querySelectorAll('.fade-in-up').forEach(el => {
+            observer.observe(el);
+        });
+
+        // ========== 表单提交 ==========
+        function handleSubmit(event) {
+            event.preventDefault();
+            const form = document.getElementById('ctaForm');
+            const successMsg = document.getElementById('formSuccess');
+            const submitBtn = document.getElementById('formSubmitBtn');
+            
+            // 模拟提交
+            submitBtn.textContent = '提交中...';
+            submitBtn.disabled = true;
+            
+            setTimeout(function() {
+                successMsg.classList.add('show');
+                submitBtn.textContent = '提交咨询请求';
+                submitBtn.disabled = false;
+                form.querySelector('input[name="name"]').value = '';
+                form.querySelector('input[name="company"]').value = '';
+                form.querySelector('input[name="phone"]').value = '';
+                form.querySelector('select[name="type"]').value = '';
+                form.querySelector('textarea[name="description"]').value = '';
+                
+                // 3秒后隐藏成功消息
+                setTimeout(function() {
+                    successMsg.classList.remove('show');
+                }, 5000);
+            }, 1200);
+        }
+
+        // ========== 客服聊天窗口 ==========
+        const chatToggle = document.getElementById('chatToggle');
+        const chatWindow = document.getElementById('chatWindow');
+        const chatClose = document.getElementById('chatClose');
+        const chatBody = document.getElementById('chatBody');
+        const chatInput = document.getElementById('chatInput');
+
+        chatToggle.addEventListener('click', function() {
+            chatWindow.classList.toggle('active');
+            if (chatWindow.classList.contains('active')) {
+                chatToggle.querySelector('.notification-dot').style.display = 'none';
+            }
+        });
+
+        chatClose.addEventListener('click', function() {
+            chatWindow.classList.remove('active');
+        });
+
+        function addMessage(text, type) {
+            const msg = document.createElement('div');
+            msg.className = 'chat-message ' + type;
+            msg.textContent = text;
+            chatBody.appendChild(msg);
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+
+        function getBotResponse(userText) {
+            const responses = {
+                '如何开始使用': '您可以直接点击页面上的"免费开始"按钮注册账号，注册后即可享受7天免费试用。试用期间可以体验大部分核心功能。如有问题可随时联系我们的客服团队！',
+                '价格是多少': '我们提供三档套餐：入门版¥299/月（适合个人命理师）、专业版¥899/月（适合工作室，最受欢迎）、企业版¥2999/月（适合MCN机构）。年付享受8折优惠！',
+                '支持哪些语言': '目前我们支持10种语言：中文（简/繁）、英语、日语、韩语、越南语、泰语、法语、德语、西班牙语、葡萄牙语。覆盖全球主要市场！',
+                'default': '感谢您的咨询！我们的客服团队会尽快回复您。您也可以拨打热线 400-XXX-XXXX 或添加微信 NexusMeta_AI 获取即时帮助。'
+            };
+            
+            for (const key in responses) {
+                if (userText.includes(key)) {
+                    return responses[key];
+                }
+            }
+            return responses['default'];
+        }
+
+        function sendMessage() {
+            const text = chatInput.value.trim();
+            if (!text) return;
+            
+            addMessage(text, 'user');
+            chatInput.value = '';
+            
+            setTimeout(function() {
+                const response = getBotResponse(text);
+                addMessage(response, 'bot');
+            }, 800);
+        }
+
+        function sendSuggestion(text) {
+            addMessage(text, 'user');
+            setTimeout(function() {
+                const response = getBotResponse(text);
+                addMessage(response, 'bot');
+            }, 800);
+        }
+
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendMessage();
+            }
+        }
+
+        chatSend.addEventListener('click', sendMessage);
+        chatInput.addEventListener('keypress', handleChatKeyPress);
+
+        // ========== 平滑滚动 ==========
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                const href = this.getAttribute('href');
+                if (href === '#') return;
+                const target = document.querySelector(href);
+                if (target) {
+                    e.preventDefault();
+                    const offset = 80;
+                    const targetPosition = target.offsetTop - offset;
+                    window.scrollTo({
+                        top: targetPosition,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // ========== Logo墙鼠标悬停暂停 ==========
+        const logoTrack = document.getElementById('logoTrack');
+        logoTrack.addEventListener('mouseenter', function() {
+            this.style.animationPlayState = 'paused';
+        });
+        logoTrack.addEventListener('mouseleave', function() {
+            this.style.animationPlayState = 'running';
+        });
+
+        // ==================== API 配置 ====================
+        const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:3001'
+            : 'https://api.xuanmi.net';
+
+        // ==================== 弹窗管理 ====================
+        let currentUser = null;
+        let authToken = null;
+
+        // 从 localStorage 恢复登录状态
+        (function restoreAuth() {
+            try {
+                const saved = localStorage.getItem('nexusmeta_auth');
+                if (saved) {
+                    const { token, user } = JSON.parse(saved);
+                    authToken = token;
+                    currentUser = user;
+                    // DOM ready 后再更新导航
+                    setTimeout(updateNavForLoggedIn, 0);
+                }
+            } catch(e) {}
+        })();
+
+        function updateNavForLoggedIn() {
+            if (!currentUser) return;
+            const loginBtns = document.querySelectorAll('.btn-login');
+            loginBtns.forEach(btn => {
+                btn.textContent = '个人中心';
+                btn.onclick = () => showUserPanel();
+            });
+        }
+
+        function openModal(type, extra) {
+            if (type === 'success_inner') { openSuccessModal(); return; }
+            closeAllModals();
+            const overlay = document.getElementById('modalOverlay');
+            overlay.classList.add('active');
+            let modalId = '';
+            switch(type) {
+                case 'login':     modalId = 'loginModal'; break;
+                case 'register':  modalId = 'registerModal'; break;
+                case 'bazi':      modalId = 'baziModal'; checkAuthForFull(); break;
+                case 'translate': modalId = 'translateModal'; break;
+                case 'fengshui':  modalId = 'fengshuiModal'; break;
+                case 'contact':   modalId = 'contactModal'; break;
+                default: return;
+            }
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'block';
+                setTimeout(() => modal.classList.add('active'), 10);
+            }
+        }
+
+        function openSuccessModal() {
+            const overlay = document.getElementById('modalOverlay');
+            overlay.classList.add('active');
+            const modal = document.getElementById('successModal');
+            if (modal) {
+                modal.style.display = 'block';
+                setTimeout(() => modal.classList.add('active'), 10);
+            }
+        }
+
+        function closeAllModals() {
+            const overlay = document.getElementById('modalOverlay');
+            if (overlay) overlay.classList.remove('active');
+            document.querySelectorAll('.modal-box').forEach(m => {
+                m.classList.remove('active');
+                setTimeout(() => { if (!m.classList.contains('active')) m.style.display = 'none'; }, 300);
+            });
+        }
+
+        function switchModal(type) {
+            closeAllModals();
+            setTimeout(() => openModal(type), 350);
+        }
+
+        function checkAuthForFull() {
+            const tip = document.getElementById('fullAnalysisTip');
+            const form = document.getElementById('fullAnalysisForm');
+            if (authToken) {
+                if(tip) tip.style.display = 'none';
+                if(form) form.style.display = 'block';
+            } else {
+                if(tip) tip.style.display = 'flex';
+                if(form) form.style.display = 'none';
+            }
+        }
+
+        function switchBaziTab(tab, btn) {
+            document.querySelectorAll('.bazi-tab').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.getElementById('baziTabFree').style.display = 'none';
+            document.getElementById('baziTabFull').style.display = 'none';
+            document.getElementById('baziTabFengshui_tab').style.display = 'none';
+            const map = { free: 'baziTabFree', full: 'baziTabFull', fengshui_tab: 'baziTabFengshui_tab' };
+            document.getElementById(map[tab]).style.display = 'block';
+        }
+
     </script>
-  </body>
+
+    <!-- ==================== 全功能弹窗系统 ==================== -->
+
+    <!-- 弹窗遮罩 -->
+    <div class="modal-overlay" id="modalOverlay" onclick="closeAllModals()"></div>
+
+    <!-- ====== 登录弹窗 ====== -->
+    <div class="modal-box" id="loginModal">
+        <button class="modal-close" onclick="closeAllModals()">✕</button>
+        <div class="modal-header">
+            <div class="modal-icon">🔐</div>
+            <h3>欢迎回来</h3>
+            <p>登录您的玄咪AI账号</p>
+        </div>
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <div class="modal-field">
+                <label>邮箱</label>
+                <input type="email" id="loginEmail" placeholder="请输入邮箱" required>
+            </div>
+            <div class="modal-field">
+                <label>密码</label>
+                <input type="password" id="loginPassword" placeholder="请输入密码" required>
+            </div>
+            <div id="loginError" class="modal-error" style="display:none"></div>
+            <button type="submit" class="modal-btn" id="loginSubmitBtn">登 录</button>
+        </form>
+        <p class="modal-switch">没有账号？<a href="#" onclick="switchModal('register')">立即注册</a></p>
+    </div>
+
+    <!-- ====== 注册弹窗 ====== -->
+    <div class="modal-box" id="registerModal">
+        <button class="modal-close" onclick="closeAllModals()">✕</button>
+        <div class="modal-header">
+            <div class="modal-icon">✨</div>
+            <h3>开始你的玄学AI之旅</h3>
+            <p>注册即赠 100 积分，永久免费额度</p>
+        </div>
+        <form id="registerForm" onsubmit="handleRegister(event)">
+            <div class="modal-field">
+                <label>用户名</label>
+                <input type="text" id="regUsername" placeholder="请输入用户名" required minlength="2">
+            </div>
+            <div class="modal-field">
+                <label>邮箱</label>
+                <input type="email" id="regEmail" placeholder="请输入邮箱" required>
+            </div>
+            <div class="modal-field">
+                <label>密码</label>
+                <input type="password" id="regPassword" placeholder="至少8位字符" required minlength="8">
+            </div>
+            <div id="regError" class="modal-error" style="display:none"></div>
+            <button type="submit" class="modal-btn" id="regSubmitBtn">免费注册</button>
+        </form>
+        <p class="modal-switch">已有账号？<a href="#" onclick="switchModal('login')">立即登录</a></p>
+    </div>
+
+    <!-- ====== 注册成功弹窗 ====== -->
+    <div class="modal-box" id="successModal">
+        <button class="modal-close" onclick="closeAllModals()">✕</button>
+        <div class="modal-header">
+            <div class="modal-icon">🎉</div>
+            <h3>注册成功！</h3>
+            <p id="successMsg">欢迎加入玄咪AI，您已获得100积分</p>
+        </div>
+        <div class="success-card">
+            <div class="success-row"><span>👤 用户名</span><span id="successUsername">-</span></div>
+            <div class="success-row"><span>💎 积分余额</span><span id="successCredits">100</span></div>
+            <div class="success-row"><span>📦 套餐</span><span>免费版</span></div>
+        </div>
+        <button class="modal-btn" onclick="openModal('bazi')">立即体验命理分析 →</button>
+    </div>
+
+    <!-- ====== 八字命理弹窗 ====== -->
+    <div class="modal-box modal-wide" id="baziModal">
+        <button class="modal-close" onclick="closeAllModals()">✕</button>
+        <div class="modal-header">
+            <div class="modal-icon">🔮</div>
+            <h3>AI八字命理解盘</h3>
+            <p>输入生辰八字，AI 即刻为您推算命运格局</p>
+        </div>
+        <div class="bazi-tabs">
+            <button class="bazi-tab active" onclick="switchBaziTab('free', this)">免费八字排盘</button>
+            <button class="bazi-tab" onclick="switchBaziTab('full', this)">完整命理解析</button>
+            <button class="bazi-tab" onclick="switchBaziTab('fengshui_tab', this)">风水分析</button>
+        </div>
+
+        <!-- 免费八字 -->
+        <div id="baziTabFree">
+            <form id="baziForm" onsubmit="handleBazi(event)">
+                <div class="bazi-grid">
+                    <div class="modal-field">
+                        <label>出生年份</label>
+                        <input type="number" id="baziYear" placeholder="如：1990" min="1900" max="2024" required>
+                    </div>
+                    <div class="modal-field">
+                        <label>出生月份</label>
+                        <input type="number" id="baziMonth" placeholder="1-12" min="1" max="12" required>
+                    </div>
+                    <div class="modal-field">
+                        <label>出生日期</label>
+                        <input type="number" id="baziDay" placeholder="1-31" min="1" max="31" required>
+                    </div>
+                    <div class="modal-field">
+                        <label>出生时辰</label>
+                        <select id="baziHour">
+                            <option value="0">子时（23-1点）</option>
+                            <option value="1">丑时（1-3点）</option>
+                            <option value="2">寅时（3-5点）</option>
+                            <option value="3">卯时（5-7点）</option>
+                            <option value="4">辰时（7-9点）</option>
+                            <option value="5">巳时（9-11点）</option>
+                            <option value="6" selected>午时（11-13点）</option>
+                            <option value="7">未时（13-15点）</option>
+                            <option value="8">申时（15-17点）</option>
+                            <option value="9">酉时（17-19点）</option>
+                            <option value="10">戌时（19-21点）</option>
+                            <option value="11">亥时（21-23点）</option>
+                        </select>
+                    </div>
+                    <div class="modal-field">
+                        <label>性别</label>
+                        <select id="baziGender">
+                            <option value="male">男</option>
+                            <option value="female">女</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="modal-btn" id="baziSubmitBtn">✨ 开始排盘解析</button>
+            </form>
+            <div id="baziResult" class="ai-result" style="display:none"></div>
+        </div>
+
+        <!-- 完整命理 -->
+        <div id="baziTabFull" style="display:none">
+            <div class="auth-required-tip" id="fullAnalysisTip">
+                <span>🔒</span> 完整命理解析需要登录账号
+                <button onclick="closeAllModals(); setTimeout(()=>openModal('login'),100)">立即登录</button>
+            </div>
+            <div id="fullAnalysisForm" style="display:none">
+                <form onsubmit="handleFullAnalysis(event)">
+                    <div class="bazi-grid">
+                        <div class="modal-field">
+                            <label>出生年份</label>
+                            <input type="number" id="fullYear" placeholder="如：1990" min="1900" max="2024" required>
+                        </div>
+                        <div class="modal-field">
+                            <label>出生月份</label>
+                            <input type="number" id="fullMonth" placeholder="1-12" min="1" max="12" required>
+                        </div>
+                        <div class="modal-field">
+                            <label>出生日期</label>
+                            <input type="number" id="fullDay" placeholder="1-31" min="1" max="31" required>
+                        </div>
+                        <div class="modal-field">
+                            <label>出生时辰</label>
+                            <select id="fullHour">
+                                <option value="0">子时（23-1点）</option>
+                                <option value="6" selected>午时（11-13点）</option>
+                            </select>
+                        </div>
+                        <div class="modal-field">
+                            <label>性别</label>
+                            <select id="fullGender">
+                                <option value="male">男</option>
+                                <option value="female">女</option>
+                            </select>
+                        </div>
+                        <div class="modal-field">
+                            <label>分析类型</label>
+                            <select id="fullType">
+                                <option value="bazi">八字命理</option>
+                                <option value="ziwei">紫微斗数</option>
+                                <option value="fortune">流年大运</option>
+                                <option value="career">事业财运</option>
+                                <option value="love">感情婚姻</option>
+                            </select>
+                        </div>
+                    </div>
+                    <button type="submit" class="modal-btn">🔮 深度命理解析</button>
+                </form>
+                <div id="fullAnalysisResult" class="ai-result" style="display:none"></div>
+            </div>
+        </div>
+
+        <!-- 风水分析 tab -->
+        <div id="baziTabFengshui_tab" style="display:none">
+            <form id="fengshuiTabForm" onsubmit="handleFengshuiText(event)">
+                <div class="modal-field">
+                    <label>房屋朝向</label>
+                    <select id="fsOrientation">
+                        <option value="south">坐北朝南</option>
+                        <option value="east">坐西朝东</option>
+                        <option value="west">坐东朝西</option>
+                        <option value="north">坐南朝北</option>
+                        <option value="southeast">坐西北朝东南</option>
+                    </select>
+                </div>
+                <div class="modal-field">
+                    <label>房屋类型</label>
+                    <select id="fsType">
+                        <option value="residential">住宅</option>
+                        <option value="office">办公室</option>
+                        <option value="commercial">商铺</option>
+                    </select>
+                </div>
+                <div class="modal-field" style="grid-column:span 2">
+                    <label>描述您的房屋格局（选填）</label>
+                    <textarea id="fsDesc" placeholder="如：三室两厅，客厅在东，主卧在北，入户门朝南..." style="width:100%;height:80px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:10px;color:#f0f0ff;font-size:14px;resize:none"></textarea>
+                </div>
+                <button type="submit" class="modal-btn">🏯 AI风水分析</button>
+            </form>
+            <div id="fengshuiTabResult" class="ai-result" style="display:none"></div>
+        </div>
+    </div>
+
+    <!-- ====== 翻译体验弹窗 ====== -->
+    <div class="modal-box modal-wide" id="translateModal">
+        <button class="modal-close" onclick="closeAllModals()">✕</button>
+        <div class="modal-header">
+            <div class="modal-icon">🌐</div>
+            <h3>多语言玄学翻译</h3>
+            <p>AI 专业翻译，保留东方玄学意境</p>
+        </div>
+        <form id="translateForm" onsubmit="handleTranslate(event)">
+            <div class="translate-row">
+                <div class="modal-field" style="flex:1">
+                    <label>目标语言</label>
+                    <select id="targetLang">
+                        <option value="English">英语</option>
+                        <option value="Japanese">日语</option>
+                        <option value="Korean">韩语</option>
+                        <option value="Vietnamese">越南语</option>
+                        <option value="Thai">泰语</option>
+                        <option value="French">法语</option>
+                        <option value="German">德语</option>
+                        <option value="Spanish">西班牙语</option>
+                        <option value="Portuguese">葡萄牙语</option>
+                        <option value="Arabic">阿拉伯语</option>
+                        <option value="Russian">俄语</option>
+                        <option value="Italian">意大利语</option>
+                    </select>
+                </div>
+                <div class="modal-field" style="flex:1">
+                    <label>内容类型</label>
+                    <select id="contentType">
+                        <option value="bazi">八字命理</option>
+                        <option value="fengshui">风水</option>
+                        <option value="ziwei">紫微斗数</option>
+                        <option value="tarot">塔罗占卜</option>
+                        <option value="general">通用玄学</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-field">
+                <label>输入需要翻译的中文玄学内容</label>
+                <textarea id="translateInput" placeholder="例如：此命局天干地支相合，日主甲木生于春月，得令得地，印绶生扶，命主聪慧仁厚，有贵人相助，事业多有成就..." style="width:100%;height:100px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:12px;color:#f0f0ff;font-size:14px;resize:none" required></textarea>
+            </div>
+            <button type="submit" class="modal-btn" id="translateBtn">🌐 AI 翻译</button>
+        </form>
+        <div id="translateResult" class="ai-result" style="display:none"></div>
+    </div>
+
+    <!-- ====== 风水图像分析弹窗 ====== -->
+    <div class="modal-box modal-wide" id="fengshuiModal">
+        <button class="modal-close" onclick="closeAllModals()">✕</button>
+        <div class="modal-header">
+            <div class="modal-icon">🏯</div>
+            <h3>AI 风水分析</h3>
+            <p>描述您的房屋格局，AI 生成专业风水报告</p>
+        </div>
+        <form id="fengshuiForm" onsubmit="handleFengshuiAnalysis(event)">
+            <div class="bazi-grid">
+                <div class="modal-field">
+                    <label>房屋朝向</label>
+                    <select id="fsMainOrientation">
+                        <option value="south">坐北朝南（最佳朝向）</option>
+                        <option value="east">坐西朝东</option>
+                        <option value="west">坐东朝西</option>
+                        <option value="north">坐南朝北</option>
+                        <option value="southeast">坐西北朝东南</option>
+                        <option value="southwest">坐东北朝西南</option>
+                    </select>
+                </div>
+                <div class="modal-field">
+                    <label>房屋类型</label>
+                    <select id="fsMainType">
+                        <option value="residential">住宅</option>
+                        <option value="office">办公室</option>
+                        <option value="commercial">商铺/店面</option>
+                        <option value="villa">别墅</option>
+                    </select>
+                </div>
+                <div class="modal-field">
+                    <label>业主出生年份（用于个人化分析）</label>
+                    <input type="number" id="fsOwnerYear" placeholder="如：1985" min="1950" max="2010">
+                </div>
+                <div class="modal-field">
+                    <label>分析重点</label>
+                    <select id="fsFocus">
+                        <option value="overall">整体风水格局</option>
+                        <option value="wealth">财运旺财布局</option>
+                        <option value="health">健康养生格局</option>
+                        <option value="career">事业官运格局</option>
+                        <option value="love">感情桃花格局</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-field">
+                <label>详细描述房屋格局（越详细越准确）</label>
+                <textarea id="fsMainDesc" placeholder="请描述：户型结构、各房间朝向、入户门位置、厨房卫生间位置、楼层、周边环境（河流、道路、高楼等）..." style="width:100%;height:100px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:12px;color:#f0f0ff;font-size:14px;resize:none;margin-top:8px" required></textarea>
+            </div>
+            <button type="submit" class="modal-btn" id="fengshuiSubmitBtn">🏯 生成风水分析报告</button>
+        </form>
+        <div id="fengshuiResult" class="ai-result" style="display:none"></div>
+    </div>
+
+    <!-- ====== 联系销售弹窗 ====== -->
+    <div class="modal-box" id="contactModal">
+        <button class="modal-close" onclick="closeAllModals()">✕</button>
+        <div class="modal-header">
+            <div class="modal-icon">💼</div>
+            <h3>企业版咨询</h3>
+            <p>专属顾问将在24小时内联系您</p>
+        </div>
+        <div class="contact-info-box">
+            <div class="contact-item">📧 <span>business@xuanmi.net</span></div>
+            <div class="contact-item">💬 <span>微信：NexusMeta_AI</span></div>
+            <div class="contact-item">📞 <span>400-XXX-XXXX（工作日9-18点）</span></div>
+        </div>
+        <p style="color:var(--text-secondary);font-size:14px;margin:12px 0 20px;text-align:center">或填写下方表单，顾问主动联系您</p>
+        <form id="contactForm" onsubmit="handleContactSubmit(event)">
+            <div class="modal-field">
+                <label>姓名</label>
+                <input type="text" id="contactName" placeholder="您的姓名" required>
+            </div>
+            <div class="modal-field">
+                <label>联系方式（手机/微信）</label>
+                <input type="text" id="contactPhone" placeholder="手机号或微信号" required>
+            </div>
+            <div class="modal-field">
+                <label>公司/机构</label>
+                <input type="text" id="contactCompany" placeholder="公司或机构名称">
+            </div>
+            <div id="contactError" class="modal-error" style="display:none"></div>
+            <button type="submit" class="modal-btn" id="contactSubmitBtn">提交咨询请求</button>
+        </form>
+    </div>
+
+    <style>
+        /* ====== 弹窗样式 ====== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(6px);
+            z-index: 2000;
+        }
+        .modal-overlay.active { display: block; }
+
+        .modal-box {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.92);
+            background: linear-gradient(135deg, #0d0d2b, #130d2e);
+            border: 1px solid rgba(124,58,237,0.35);
+            border-radius: 20px;
+            padding: 36px 32px 28px;
+            width: 90%;
+            max-width: 460px;
+            z-index: 2100;
+            box-shadow: 0 30px 80px rgba(0,0,0,0.6), 0 0 60px rgba(124,58,237,0.15);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-box.modal-wide { max-width: 620px; }
+        .modal-box.active {
+            display: block;
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: rgba(255,255,255,0.08);
+            border: none;
+            color: var(--text-secondary);
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .modal-close:hover { background: rgba(255,255,255,0.18); color: #fff; }
+        .modal-header { text-align: center; margin-bottom: 24px; }
+        .modal-icon { font-size: 40px; margin-bottom: 10px; }
+        .modal-header h3 { font-size: 22px; font-weight: 700; color: #f0f0ff; margin-bottom: 6px; }
+        .modal-header p { font-size: 14px; color: var(--text-secondary); }
+        .modal-field { margin-bottom: 16px; }
+        .modal-field label { display: block; font-size: 13px; color: var(--text-secondary); margin-bottom: 6px; }
+        .modal-field input, .modal-field select, .modal-field textarea {
+            width: 100%;
+            padding: 11px 14px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.12);
+            border-radius: 10px;
+            color: var(--text-primary);
+            font-size: 14px;
+            outline: none;
+            transition: border 0.2s;
+            font-family: inherit;
+        }
+        .modal-field input:focus, .modal-field select:focus { border-color: var(--purple-primary); background: rgba(124,58,237,0.08); }
+        .modal-field select option { background: #0d0d2b; }
+        .modal-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, var(--purple-primary), #9333ea);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 8px;
+        }
+        .modal-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(124,58,237,0.45); }
+        .modal-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+        .modal-switch { text-align: center; margin-top: 16px; font-size: 14px; color: var(--text-secondary); }
+        .modal-switch a { color: var(--purple-light); text-decoration: none; }
+        .modal-switch a:hover { color: var(--gold); }
+        .modal-error {
+            background: rgba(239,68,68,0.15);
+            border: 1px solid rgba(239,68,68,0.3);
+            border-radius: 8px;
+            padding: 10px 14px;
+            font-size: 13px;
+            color: #fca5a5;
+            margin-bottom: 12px;
+        }
+
+        /* 功能卡片体验按钮 */
+        .feature-btn {
+            margin-top: 14px;
+            padding: 9px 20px;
+            background: linear-gradient(135deg, rgba(124,58,237,0.25), rgba(212,175,55,0.15));
+            border: 1px solid rgba(124,58,237,0.4);
+            border-radius: 8px;
+            color: var(--purple-light);
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .feature-btn:hover {
+            background: linear-gradient(135deg, var(--purple-primary), var(--purple-dark));
+            color: white;
+            border-color: var(--purple-primary);
+            transform: translateY(-2px);
+        }
+
+        /* 成功卡片 */
+        .success-card {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        .success-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 14px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .success-row:last-child { border-bottom: none; }
+        .success-row span:last-child { color: var(--gold); font-weight: 600; }
+
+        /* AI 结果区域 */
+        .ai-result {
+            margin-top: 20px;
+            background: rgba(124,58,237,0.08);
+            border: 1px solid rgba(124,58,237,0.25);
+            border-radius: 12px;
+            padding: 20px;
+            font-size: 14px;
+            line-height: 1.8;
+            color: var(--text-primary);
+            max-height: 360px;
+            overflow-y: auto;
+            white-space: pre-wrap;
+        }
+        .ai-result .loading {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: var(--purple-light);
+            font-style: italic;
+        }
+        .ai-result .loading::before {
+            content: '';
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(167,139,250,0.3);
+            border-top-color: var(--purple-light);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* 八字 tabs */
+        .bazi-tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+        .bazi-tab {
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        .bazi-tab.active {
+            background: linear-gradient(135deg, var(--purple-primary), var(--purple-dark));
+            border-color: var(--purple-primary);
+            color: white;
+        }
+        .bazi-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+        /* 翻译行 */
+        .translate-row { display: flex; gap: 12px; }
+
+        /* 认证提示 */
+        .auth-required-tip {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(212,175,55,0.1);
+            border: 1px solid rgba(212,175,55,0.3);
+            border-radius: 10px;
+            padding: 14px 16px;
+            font-size: 14px;
+            color: var(--gold-light);
+            margin-bottom: 16px;
+        }
+        .auth-required-tip button {
+            margin-left: auto;
+            padding: 6px 14px;
+            background: linear-gradient(135deg, var(--gold-dark), var(--gold));
+            border: none;
+            border-radius: 6px;
+            color: #0d0d2b;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        /* 联系销售 */
+        .contact-info-box {
+            background: rgba(255,255,255,0.04);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 4px;
+        }
+        .contact-item {
+            padding: 8px 0;
+            font-size: 14px;
+            color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .contact-item span { color: var(--text-primary); }
+    </style>
+
+    <script>
+        // ==================== 注册 ====================
+        async function handleRegister(e) {
+            e.preventDefault();
+            const btn = document.getElementById('regSubmitBtn');
+            const errBox = document.getElementById('regError');
+            errBox.style.display = 'none';
+            btn.textContent = '注册中...';
+            btn.disabled = true;
+            try {
+                const res = await fetch(`${API_BASE}/api/auth/register`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        username: document.getElementById('regUsername').value.trim(),
+                        email: document.getElementById('regEmail').value.trim(),
+                        password: document.getElementById('regPassword').value,
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    authToken = data.data.token;
+                    currentUser = data.data.user;
+                    localStorage.setItem('nexusmeta_auth', JSON.stringify({ token: authToken, user: currentUser }));
+                    updateNavForLoggedIn();
+                    closeAllModals();
+                    // 显示成功弹窗
+                    document.getElementById('successUsername').textContent = currentUser.username;
+                    document.getElementById('successCredits').textContent = currentUser.credits || 100;
+                    document.getElementById('successMsg').textContent = `欢迎加入玄咪AI，${currentUser.username}！您已获得 ${currentUser.credits || 100} 积分`;
+                    setTimeout(() => openModal('success_inner'), 350);
+                } else {
+                    errBox.textContent = data.error || data.message || '注册失败，请重试';
+                    errBox.style.display = 'block';
+                }
+            } catch(err) {
+                errBox.textContent = '网络错误，请检查连接后重试';
+                errBox.style.display = 'block';
+            } finally {
+                btn.textContent = '免费注册';
+                btn.disabled = false;
+            }
+        }
+
+        // ==================== 登录 ====================
+        async function handleLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('loginSubmitBtn');
+            const errBox = document.getElementById('loginError');
+            errBox.style.display = 'none';
+            btn.textContent = '登录中...';
+            btn.disabled = true;
+            try {
+                const res = await fetch(`${API_BASE}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: document.getElementById('loginEmail').value.trim(),
+                        password: document.getElementById('loginPassword').value,
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    authToken = data.data.token;
+                    currentUser = data.data.user;
+                    localStorage.setItem('nexusmeta_auth', JSON.stringify({ token: authToken, user: currentUser }));
+                    updateNavForLoggedIn();
+                    closeAllModals();
+                    showToast(`✅ 欢迎回来，${currentUser.username}！`);
+                } else {
+                    errBox.textContent = data.error || data.message || '邮箱或密码错误';
+                    errBox.style.display = 'block';
+                }
+            } catch(err) {
+                errBox.textContent = '网络错误，请检查连接后重试';
+                errBox.style.display = 'block';
+            } finally {
+                btn.textContent = '登 录';
+                btn.disabled = false;
+            }
+        }
+
+        // ==================== 八字免费排盘 ====================
+        async function handleBazi(e) {
+            e.preventDefault();
+            const btn = document.getElementById('baziSubmitBtn');
+            const result = document.getElementById('baziResult');
+            btn.textContent = '排盘解析中...';
+            btn.disabled = true;
+            result.style.display = 'block';
+            result.innerHTML = '<div class="loading">AI 正在推算您的命理格局，请稍候...</div>';
+            try {
+                const res = await fetch(`${API_BASE}/api/divination/bazi/free`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        birthYear: parseInt(document.getElementById('baziYear').value),
+                        birthMonth: parseInt(document.getElementById('baziMonth').value),
+                        birthDay: parseInt(document.getElementById('baziDay').value),
+                        birthHour: parseInt(document.getElementById('baziHour').value),
+                        gender: document.getElementById('baziGender').value,
+                        language: 'zh-CN',
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    const d = data.data;
+                    result.innerHTML = `<strong>🀄 八字排盘结果</strong>\n\n` +
+                        `年柱：${d.bazi?.yearPillar || '-'}　月柱：${d.bazi?.monthPillar || '-'}　日柱：${d.bazi?.dayPillar || '-'}　时柱：${d.bazi?.hourPillar || '-'}\n\n` +
+                        `五行：${d.wuxing ? Object.entries(d.wuxing).map(([k,v]) => `${k}:${v}`).join(' ') : '-'}\n\n` +
+                        `✨ AI 解读\n${d.interpretation || d.message || '解读生成中...'}`;
+                } else {
+                    result.innerHTML = `⚠️ ${data.error || data.message || '分析失败，请重试'}`;
+                }
+            } catch(err) {
+                result.innerHTML = '⚠️ 网络错误，请检查连接后重试';
+            } finally {
+                btn.textContent = '✨ 开始排盘解析';
+                btn.disabled = false;
+            }
+        }
+
+        // ==================== 完整命理分析（需登录）====================
+        async function handleFullAnalysis(e) {
+            e.preventDefault();
+            const result = document.getElementById('fullAnalysisResult');
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.textContent = '深度解析中...';
+            btn.disabled = true;
+            result.style.display = 'block';
+            result.innerHTML = '<div class="loading">AI 正在进行深度命理解析...</div>';
+            try {
+                const res = await fetch(`${API_BASE}/api/divination/analyze`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
+                    body: JSON.stringify({
+                        type: document.getElementById('fullType').value,
+                        birthYear: parseInt(document.getElementById('fullYear').value),
+                        birthMonth: parseInt(document.getElementById('fullMonth').value),
+                        birthDay: parseInt(document.getElementById('fullDay').value),
+                        birthHour: parseInt(document.getElementById('fullHour').value),
+                        gender: document.getElementById('fullGender').value,
+                        language: 'zh-CN',
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    result.innerHTML = data.data?.result || data.data?.analysis || JSON.stringify(data.data, null, 2);
+                } else {
+                    result.innerHTML = `⚠️ ${data.error || data.message || '分析失败'}`;
+                }
+            } catch(err) {
+                result.innerHTML = '⚠️ 网络错误，请重试';
+            } finally {
+                btn.textContent = '🔮 深度命理解析';
+                btn.disabled = false;
+            }
+        }
+
+        // ==================== 风水分析（文字版）====================
+        async function handleFengshuiText(e) {
+            e.preventDefault();
+            const result = document.getElementById('fengshuiTabResult');
+            const btn = e.target.querySelector('button[type="submit"]');
+            btn.textContent = '分析中...';
+            btn.disabled = true;
+            result.style.display = 'block';
+            result.innerHTML = '<div class="loading">AI 正在分析您的风水格局...</div>';
+            await doFengshuiAnalysis(
+                document.getElementById('fsOrientation').value,
+                document.getElementById('fsType').value,
+                document.getElementById('fsDesc').value,
+                null, null, result
+            );
+            btn.textContent = '🏯 AI风水分析';
+            btn.disabled = false;
+        }
+
+        async function handleFengshuiAnalysis(e) {
+            e.preventDefault();
+            const result = document.getElementById('fengshuiResult');
+            const btn = document.getElementById('fengshuiSubmitBtn');
+            btn.textContent = '生成报告中...';
+            btn.disabled = true;
+            result.style.display = 'block';
+            result.innerHTML = '<div class="loading">AI 正在生成专业风水分析报告...</div>';
+            await doFengshuiAnalysis(
+                document.getElementById('fsMainOrientation').value,
+                document.getElementById('fsMainType').value,
+                document.getElementById('fsMainDesc').value,
+                document.getElementById('fsOwnerYear').value,
+                document.getElementById('fsFocus').value,
+                result
+            );
+            btn.textContent = '🏯 生成风水分析报告';
+            btn.disabled = false;
+        }
+
+        async function doFengshuiAnalysis(orientation, type, description, ownerYear, focus, resultEl) {
+            try {
+                const body = { orientation, type, language: 'zh-CN' };
+                if (description) body.description = description;
+                if (ownerYear) body.ownerBirthYear = parseInt(ownerYear);
+                if (focus) body.focus = focus;
+
+                const res = await fetch(`${API_BASE}/api/divination/fengshui`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(body)
+                });
+                const data = await res.json();
+                if (data.success) {
+                    resultEl.innerHTML = data.data?.analysis || data.data?.result || JSON.stringify(data.data, null, 2);
+                } else {
+                    resultEl.innerHTML = `⚠️ ${data.error || data.message || '分析失败，请重试'}`;
+                }
+            } catch(err) {
+                resultEl.innerHTML = '⚠️ 网络错误，请检查连接后重试';
+            }
+        }
+
+        // ==================== 多语言翻译 ====================
+        async function handleTranslate(e) {
+            e.preventDefault();
+            const btn = document.getElementById('translateBtn');
+            const result = document.getElementById('translateResult');
+            btn.textContent = '翻译中...';
+            btn.disabled = true;
+            result.style.display = 'block';
+            result.innerHTML = '<div class="loading">AI 正在翻译，保留玄学意境中...</div>';
+            try {
+                const text = document.getElementById('translateInput').value.trim();
+                const targetLang = document.getElementById('targetLang').value;
+                const contentType = document.getElementById('contentType').value;
+
+                const res = await fetch(`${API_BASE}/api/divination/analyze`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'translation',
+                        content: text,
+                        targetLanguage: targetLang,
+                        contentType: contentType,
+                        language: targetLang,
+                    })
+                });
+                const data = await res.json();
+                if (data.success) {
+                    result.innerHTML = `<strong>🌐 ${targetLang} 译文</strong>\n\n` +
+                        (data.data?.result || data.data?.translation || data.data?.analysis || '翻译完成');
+                } else {
+                    // 回退：使用免费八字接口或直接展示
+                    result.innerHTML = `⚠️ ${data.error || '翻译服务暂时不可用，请稍后再试'}`;
+                }
+            } catch(err) {
+                result.innerHTML = '⚠️ 网络错误，请检查连接后重试';
+            } finally {
+                btn.textContent = '🌐 AI 翻译';
+                btn.disabled = false;
+            }
+        }
+
+        // ==================== 联系销售表单 ====================
+        async function handleContactSubmit(e) {
+            e.preventDefault();
+            const btn = document.getElementById('contactSubmitBtn');
+            btn.textContent = '提交中...';
+            btn.disabled = true;
+            setTimeout(() => {
+                btn.textContent = '✅ 已提交！24小时内联系您';
+                btn.style.background = 'linear-gradient(135deg, #059669, #10b981)';
+                document.getElementById('contactName').value = '';
+                document.getElementById('contactPhone').value = '';
+                document.getElementById('contactCompany').value = '';
+                setTimeout(() => {
+                    btn.textContent = '提交咨询请求';
+                    btn.style.background = '';
+                    btn.disabled = false;
+                    closeAllModals();
+                }, 3000);
+            }, 1200);
+        }
+
+        // ==================== 用户面板（已登录）====================
+        function showUserPanel() {
+            if (!currentUser) return;
+            const panel = `玄咪AI账户\n\n用户名：${currentUser.username}\n邮箱：${currentUser.email}\n积分余额：${currentUser.credits || 0}\n套餐：${currentUser.plan || 'FREE'}\n\n点击确定退出登录`;
+            if (confirm(panel)) {
+                authToken = null;
+                currentUser = null;
+                localStorage.removeItem('nexusmeta_auth');
+                location.reload();
+            }
+        }
+
+        // ==================== Toast 提示 ====================
+        function showToast(msg) {
+            let toast = document.getElementById('globalToast');
+            if (!toast) {
+                toast = document.createElement('div');
+                toast.id = 'globalToast';
+                toast.style.cssText = 'position:fixed;bottom:32px;left:50%;transform:translateX(-50%);background:linear-gradient(135deg,#7c3aed,#9333ea);color:white;padding:12px 24px;border-radius:100px;font-size:14px;z-index:9999;box-shadow:0 8px 30px rgba(124,58,237,0.4);transition:opacity 0.4s';
+                document.body.appendChild(toast);
+            }
+            toast.textContent = msg;
+            toast.style.opacity = '1';
+            setTimeout(() => { toast.style.opacity = '0'; }, 3500);
+        }
+
+        // ==================== 键盘关闭弹窗 ====================
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') closeAllModals();
+        });
+    </script>
+</body>
 </html>
