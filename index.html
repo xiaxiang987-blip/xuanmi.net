@@ -3993,9 +3993,12 @@
                     fullDesc += `；分析重点：${focusMap[focus] || focus}`;
                 }
 
+                const headers = { 'Content-Type': 'application/json' };
+                if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
+
                 const res = await fetch(`${API_BASE}/api/divination/fengshui`, {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: headers,
                     body: JSON.stringify({ description: fullDesc, analysisType: analysisType, language: 'zh' })
                 });
                 const data = await res.json();
@@ -4018,6 +4021,11 @@
                         html += `</div>`;
                     }
                     resultEl.innerHTML = html;
+                } else if (data.error && data.error.includes('认证') && !authToken) {
+                    resultEl.innerHTML = `<div style="text-align:center;padding:20px;">
+                        <div style="color:#fbbf24;font-size:16px;margin-bottom:12px;">🔒 风水分析需要登录账号</div>
+                        <button onclick="closeAllModals(); setTimeout(()=>openModal('login'),100)" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;padding:10px 24px;border-radius:8px;cursor:pointer;font-size:14px;">立即登录</button>
+                    </div>`;
                 } else if (data.success && !data.data) {
                     resultEl.innerHTML = `<div style="color:#fbbf24;">⚠️ AI 服务正在初始化中，请稍后再试</div>`;
                 } else {
