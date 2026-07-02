@@ -3858,14 +3858,38 @@
                     })
                 });
                 const data = await res.json();
-                if (data.success) {
+                if (data.success && data.data) {
                     const d = data.data;
-                    result.innerHTML = `<strong>🀄 八字排盘结果</strong>\n\n` +
-                        `年柱：${d.bazi?.yearPillar || '-'}　月柱：${d.bazi?.monthPillar || '-'}　日柱：${d.bazi?.dayPillar || '-'}　时柱：${d.bazi?.hourPillar || '-'}\n\n` +
-                        `五行：${d.wuxing ? Object.entries(d.wuxing).map(([k,v]) => `${k}:${v}`).join(' ') : '-'}\n\n` +
-                        `✨ AI 解读\n${d.interpretation || d.message || '解读生成中...'}`;
+                    const bazi = d.bazi || {};
+                    let html = '<strong style="font-size:16px;display:block;margin-bottom:12px;">🀄 八字排盘结果</strong>';
+                    html += `<div style="background:rgba(102,126,234,0.1);border-radius:8px;padding:12px;margin-bottom:12px;">`;
+                    html += `<span style="color:#a78bfa;">年柱：${bazi.yearPillar || '-'}</span>　`;
+                    html += `<span style="color:#a78bfa;">月柱：${bazi.monthPillar || '-'}</span>　`;
+                    html += `<span style="color:#a78bfa;">日柱：${bazi.dayPillar || '-'}</span>　`;
+                    html += `<span style="color:#a78bfa;">时柱：${bazi.hourPillar || '-'}</span>`;
+                    html += `</div>`;
+                    if (d.wuxing) {
+                        html += `<div style="margin-bottom:12px;color:#b4b4d9;">五行：${Object.entries(d.wuxing).map(([k,v]) => `${k}:${v}`).join(' | ')}</div>`;
+                    }
+                    if (d.luckyElements && d.luckyElements.length) {
+                        html += `<div style="margin-bottom:8px;color:#b4b4d9;">✨ 喜用神：${d.luckyElements.join('、')}</div>`;
+                    }
+                    html += `<div style="margin-top:12px;padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;border-left:3px solid #667eea;">`;
+                    html += `<div style="color:#e2e8f0;white-space:pre-wrap;line-height:1.8;font-size:14px;">${d.summary || d.analysis || '分析生成中...'}</div>`;
+                    html += `</div>`;
+                    if (d.scores) {
+                        html += `<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">`;
+                        const labels = { overall: '综合', health: '健康', wealth: '财运', love: '感情', career: '事业' };
+                        for (const [k, v] of Object.entries(d.scores)) {
+                            html += `<span style="background:rgba(102,126,234,0.15);padding:4px 10px;border-radius:12px;font-size:12px;color:#b4b4d9;">${labels[k]||k}: ${v}</span>`;
+                        }
+                        html += `</div>`;
+                    }
+                    result.innerHTML = html;
+                } else if (data.success && !data.data) {
+                    result.innerHTML = `<div style="color:#fbbf24;">⚠️ AI 服务正在初始化中，请稍后再试</div>`;
                 } else {
-                    result.innerHTML = `⚠️ ${data.error || data.message || '分析失败，请重试'}`;
+                    result.innerHTML = `<div style="color:#ef4444;">⚠️ ${data.error || data.message || '分析失败，请重试'}</div>`;
                 }
             } catch(err) {
                 result.innerHTML = '⚠️ 网络错误，请检查连接后重试';
@@ -3955,21 +3979,49 @@
 
         async function doFengshuiAnalysis(orientation, type, description, ownerYear, focus, resultEl) {
             try {
-                const body = { orientation, type, language: 'zh-CN' };
-                if (description) body.description = description;
-                if (ownerYear) body.ownerBirthYear = parseInt(ownerYear);
-                if (focus) body.focus = focus;
+                // Map frontend types to backend enum values
+                const typeMap = { residential: 'home', office: 'office', commercial: 'office', villa: 'home' };
+                const analysisType = typeMap[type] || 'home';
+                
+                // Build description that includes all info
+                const orientMap = { south: '坐北朝南', east: '坐西朝东', west: '坐东朝西', north: '坐南朝北', southeast: '坐西北朝东南', southwest: '坐东北朝西南' };
+                let fullDesc = `朝向：${orientMap[orientation] || orientation}；类型：${analysisType === 'office' ? '办公室' : '住宅'}`;
+                if (description) fullDesc += `；详情：${description}`;
+                if (ownerYear) fullDesc += `；业主出生年份：${ownerYear}`;
+                if (focus) {
+                    const focusMap = { overall: '整体风水格局', wealth: '财运旺财布局', health: '健康养生格局', career: '事业官运格局', love: '感情桃花格局' };
+                    fullDesc += `；分析重点：${focusMap[focus] || focus}`;
+                }
 
                 const res = await fetch(`${API_BASE}/api/divination/fengshui`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(body)
+                    body: JSON.stringify({ description: fullDesc, analysisType: analysisType, language: 'zh' })
                 });
                 const data = await res.json();
-                if (data.success) {
-                    resultEl.innerHTML = data.data?.analysis || data.data?.result || JSON.stringify(data.data, null, 2);
+                if (data.success && data.data) {
+                    const d = data.data;
+                    let html = '<strong style="font-size:16px;display:block;margin-bottom:12px;">🏯 风水分析报告</strong>';
+                    if (d.summary) html += `<div style="color:#fbbf24;margin-bottom:12px;font-size:15px;">📌 ${d.summary}</div>`;
+                    html += `<div style="padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;border-left:3px solid #10b981;color:#e2e8f0;white-space:pre-wrap;line-height:1.8;font-size:14px;">${d.analysis || '分析生成中...'}</div>`;
+                    if (d.scores) {
+                        html += `<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">`;
+                        const labels = { overall: '综合', health: '健康', wealth: '财运', love: '感情', career: '事业' };
+                        for (const [k, v] of Object.entries(d.scores)) {
+                            html += `<span style="background:rgba(16,185,129,0.15);padding:4px 10px;border-radius:12px;font-size:12px;color:#b4b4d9;">${labels[k]||k}: ${v}</span>`;
+                        }
+                        html += `</div>`;
+                    }
+                    if (d.suggestions && d.suggestions.length) {
+                        html += `<div style="margin-top:12px;"><strong style="color:#a78bfa;">💡 改善建议</strong>`;
+                        d.suggestions.forEach((s, i) => { html += `<div style="margin-top:6px;color:#b4b4d9;">${i+1}. ${s}</div>`; });
+                        html += `</div>`;
+                    }
+                    resultEl.innerHTML = html;
+                } else if (data.success && !data.data) {
+                    resultEl.innerHTML = `<div style="color:#fbbf24;">⚠️ AI 服务正在初始化中，请稍后再试</div>`;
                 } else {
-                    resultEl.innerHTML = `⚠️ ${data.error || data.message || '分析失败，请重试'}`;
+                    resultEl.innerHTML = `<div style="color:#ef4444;">⚠️ ${data.error || data.message || '分析失败，请重试'}</div>`;
                 }
             } catch(err) {
                 resultEl.innerHTML = '⚠️ 网络错误，请检查连接后重试';
