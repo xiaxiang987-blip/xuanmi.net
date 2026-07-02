@@ -2165,11 +2165,11 @@
                         <div class="stat-label">海外华人市场</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number">50+</div>
+                        <div class="stat-number">1000+</div>
                         <div class="stat-label">命理从业者</div>
                     </div>
                     <div class="stat-item">
-                        <div class="stat-number">10种</div>
+                        <div class="stat-number">70种</div>
                         <div class="stat-label">语言支持</div>
                     </div>
                 </div>
@@ -2548,7 +2548,7 @@
             <div class="section-header fade-in-up">
                 <span class="section-tag">TESTIMONIALS</span>
                 <h2 class="section-title">客户的<span class="gradient-text">真实评价</span></h2>
-                <p class="section-subtitle">超过50+命理从业者的共同选择，听听他们怎么说</p>
+                <p class="section-subtitle">超过1000+命理从业者的共同选择，听听他们怎么说</p>
             </div>
             <div class="testimonials-grid">
                 <div class="testimonial-card fade-in-up">
@@ -2651,7 +2651,7 @@
                         <div class="faq-icon">+</div>
                     </div>
                     <div class="faq-answer">
-                        <p>我们的命理大模型基于亿级专业命理数据训练，涵盖八字、紫微斗数、风水、塔罗、占星等多个体系，并经过50+资深命理师验证校准。AI生成的内容专业度高，同时支持大师人工审核修改，确保准确性。</p>
+                        <p>我们的命理大模型基于亿级专业命理数据训练，涵盖八字、紫微斗数、风水、塔罗、占星等多个体系，并经过1000+资深命理师验证校准。AI生成的内容专业度高，同时支持大师人工审核修改，确保准确性。</p>
                     </div>
                 </div>
                 <div class="faq-item fade-in-up">
@@ -3843,16 +3843,18 @@
             result.style.display = 'block';
             result.innerHTML = '<div class="loading">AI 正在推算您的命理格局，请稍候...</div>';
             try {
+                const genderVal = document.getElementById('baziGender').value;
+                const birthYear = document.getElementById('baziYear').value;
+                const birthMonth = String(document.getElementById('baziMonth').value).padStart(2, '0');
+                const birthDay = String(document.getElementById('baziDay').value).padStart(2, '0');
                 const res = await fetch(`${API_BASE}/api/divination/bazi/free`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        birthYear: parseInt(document.getElementById('baziYear').value),
-                        birthMonth: parseInt(document.getElementById('baziMonth').value),
-                        birthDay: parseInt(document.getElementById('baziDay').value),
-                        birthHour: parseInt(document.getElementById('baziHour').value),
-                        gender: document.getElementById('baziGender').value,
-                        language: 'zh-CN',
+                        birthDate: `${birthYear}-${birthMonth}-${birthDay}`,
+                        birthTime: document.getElementById('baziHour').value + ':00',
+                        gender: genderVal === 'male' ? 'MALE' : genderVal === 'female' ? 'FEMALE' : 'OTHER',
+                        language: 'zh',
                     })
                 });
                 const data = await res.json();
@@ -3883,17 +3885,19 @@
             result.style.display = 'block';
             result.innerHTML = '<div class="loading">AI 正在进行深度命理解析...</div>';
             try {
+                const fullGenderVal = document.getElementById('fullGender').value;
+                const fullBirthYear = document.getElementById('fullYear').value;
+                const fullBirthMonth = String(document.getElementById('fullMonth').value).padStart(2, '0');
+                const fullBirthDay = String(document.getElementById('fullDay').value).padStart(2, '0');
                 const res = await fetch(`${API_BASE}/api/divination/analyze`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
                     body: JSON.stringify({
                         type: document.getElementById('fullType').value,
-                        birthYear: parseInt(document.getElementById('fullYear').value),
-                        birthMonth: parseInt(document.getElementById('fullMonth').value),
-                        birthDay: parseInt(document.getElementById('fullDay').value),
-                        birthHour: parseInt(document.getElementById('fullHour').value),
-                        gender: document.getElementById('fullGender').value,
-                        language: 'zh-CN',
+                        birthDate: `${fullBirthYear}-${fullBirthMonth}-${fullBirthDay}`,
+                        birthTime: document.getElementById('fullHour').value + ':00',
+                        gender: fullGenderVal === 'male' ? 'MALE' : fullGenderVal === 'female' ? 'FEMALE' : 'OTHER',
+                        language: 'zh',
                     })
                 });
                 const data = await res.json();
