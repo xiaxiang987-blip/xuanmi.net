@@ -3834,6 +3834,16 @@
         }
 
         // ==================== 八字免费排盘 ====================
+        // ==================== 工具函数：格式化AI文本（\n→<br>，**x**→<strong>x</strong>）====================
+        function formatAnalysisText(text) {
+            if (!text) return '';
+            return text
+                .replace(/\\n/g, '<br>')
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>');
+        }
+
+        // ==================== 八字排盘 ====================
         async function handleBazi(e) {
             e.preventDefault();
             const btn = document.getElementById('baziSubmitBtn');
@@ -3861,38 +3871,103 @@
                 if (data.success && data.data) {
                     const d = data.data;
                     const bazi = d.bazi || {};
-                    let html = '<strong style="font-size:16px;display:block;margin-bottom:12px;">🀄 八字排盘结果</strong>';
-                    html += `<div style="background:rgba(102,126,234,0.1);border-radius:8px;padding:12px;margin-bottom:12px;">`;
-                    html += `<span style="color:#a78bfa;">年柱：${bazi.yearPillar || '-'}</span>　`;
-                    html += `<span style="color:#a78bfa;">月柱：${bazi.monthPillar || '-'}</span>　`;
-                    html += `<span style="color:#a78bfa;">日柱：${bazi.dayPillar || '-'}</span>　`;
-                    html += `<span style="color:#a78bfa;">时柱：${bazi.hourPillar || '-'}</span>`;
-                    html += `</div>`;
-                    if (d.wuxing) {
-                        html += `<div style="margin-bottom:12px;color:#b4b4d9;">五行：${Object.entries(d.wuxing).map(([k,v]) => `${k}:${v}`).join(' | ')}</div>`;
+                    const wuxing = bazi.wuxingCount || {};
+                    let html = '';
+                    // 标题
+                    html += '<strong style="font-size:18px;display:block;margin-bottom:14px;color:#a78bfa;">🀄 八字排盘结果</strong>';
+                    // 四柱
+                    html += '<div style="background:rgba(102,126,234,0.12);border-radius:10px;padding:14px;margin-bottom:14px;text-align:center;">';
+                    html += `<div style="display:flex;justify-content:space-around;gap:8px;flex-wrap:wrap;">`;
+                    const pillars = [
+                        { label: '年柱', val: bazi.yearPillar },
+                        { label: '月柱', val: bazi.monthPillar },
+                        { label: '日柱', val: bazi.dayPillar },
+                        { label: '时柱', val: bazi.hourPillar },
+                    ];
+                    pillars.forEach(p => {
+                        html += `<div style="background:rgba(167,139,250,0.15);border-radius:8px;padding:8px 14px;min-width:70px;">`;
+                        html += `<div style="font-size:11px;color:#9393b8;margin-bottom:4px;">${p.label}</div>`;
+                        html += `<div style="font-size:20px;color:#a78bfa;font-weight:bold;">${p.val || '-'}</div>`;
+                        html += `</div>`;
+                    });
+                    html += '</div></div>';
+                    // 日主描述（核心结论）
+                    if (d.dayMasterDesc) {
+                        html += `<div style="background:rgba(16,185,129,0.1);border-radius:8px;padding:12px;margin-bottom:12px;border-left:3px solid #10b981;">`;
+                        html += `<div style="color:#10b981;font-size:13px;margin-bottom:4px;">🎯 命格特征</div>`;
+                        html += `<div style="color:#e2e8f0;font-size:15px;line-height:1.6;">${d.dayMasterDesc}</div>`;
+                        html += `</div>`;
                     }
-                    if (d.luckyElements && d.luckyElements.length) {
-                        html += `<div style="margin-bottom:8px;color:#b4b4d9;">✨ 喜用神：${d.luckyElements.join('、')}</div>`;
+                    // 一行结论
+                    if (d.summary) {
+                        html += `<div style="background:rgba(251,191,36,0.1);border-radius:8px;padding:10px;margin-bottom:12px;text-align:center;color:#fbbf24;font-size:14px;">📌 ${d.summary}</div>`;
                     }
-                    html += `<div style="margin-top:12px;padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;border-left:3px solid #667eea;">`;
-                    html += `<div style="color:#e2e8f0;white-space:pre-wrap;line-height:1.8;font-size:14px;">${d.summary || d.analysis || '分析生成中...'}</div>`;
-                    html += `</div>`;
-                    if (d.scores) {
-                        html += `<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">`;
-                        const labels = { overall: '综合', health: '健康', wealth: '财运', love: '感情', career: '事业' };
-                        for (const [k, v] of Object.entries(d.scores)) {
-                            html += `<span style="background:rgba(102,126,234,0.15);padding:4px 10px;border-radius:12px;font-size:12px;color:#b4b4d9;">${labels[k]||k}: ${v}</span>`;
+                    // 五行分布
+                    if (wuxing && Object.keys(wuxing).length) {
+                        html += `<div style="margin-bottom:12px;">`;
+                        html += `<div style="color:#9393b8;font-size:12px;margin-bottom:6px;">五行分布</div>`;
+                        html += `<div style="display:flex;gap:6px;flex-wrap:wrap;">`;
+                        const wxColors = { '木': '#22c55e', '火': '#ef4444', '土': '#eab308', '金': '#f97316', '水': '#3b82f6' };
+                        for (const [k, v] of Object.entries(wuxing)) {
+                            const color = wxColors[k] || '#a78bfa';
+                            html += `<span style="background:${color}22;color:${color};padding:4px 10px;border-radius:12px;font-size:13px;border:1px solid ${color}44;">${k}: ${v}</span>`;
                         }
+                        html += `</div></div>`;
+                    }
+                    // 喜用神/忌神
+                    if (d.luckyElements && d.luckyElements.length) {
+                        html += `<div style="margin-bottom:10px;font-size:13px;"><span style="color:#10b981;">✨ 喜用神：</span><span style="color:#e2e8f0;">${d.luckyElements.join('、')}</span></div>`;
+                    }
+                    if (d.weakElements && d.weakElements.length) {
+                        html += `<div style="margin-bottom:14px;font-size:13px;"><span style="color:#ef4444;">⚠️ 忌神：</span><span style="color:#e2e8f0;">${d.weakElements.join('、')}</span></div>`;
+                    }
+                    // 各项建议（问真八字风格）
+                    if (d.careerAdvice) {
+                        html += `<div style="background:rgba(102,126,234,0.08);border-radius:8px;padding:12px;margin-bottom:10px;"><div style="color:#667eea;font-size:13px;margin-bottom:6px;">💼 事业建议</div><div style="color:#e2e8f0;font-size:14px;line-height:1.8;">${formatAnalysisText(d.careerAdvice)}</div></div>`;
+                    }
+                    if (d.wealthAdvice) {
+                        html += `<div style="background:rgba(234,179,8,0.08);border-radius:8px;padding:12px;margin-bottom:10px;"><div style="color:#eab308;font-size:13px;margin-bottom:6px;">💰 财运建议</div><div style="color:#e2e8f0;font-size:14px;line-height:1.8;">${formatAnalysisText(d.wealthAdvice)}</div></div>`;
+                    }
+                    if (d.loveAdvice) {
+                        html += `<div style="background:rgba(244,114,182,0.08);border-radius:8px;padding:12px;margin-bottom:10px;"><div style="color:#f472b6;font-size:13px;margin-bottom:6px;">💕 感情建议</div><div style="color:#e2e8f0;font-size:14px;line-height:1.8;">${formatAnalysisText(d.loveAdvice)}</div></div>`;
+                    }
+                    if (d.healthAdvice) {
+                        html += `<div style="background:rgba(16,185,129,0.08);border-radius:8px;padding:12px;margin-bottom:10px;"><div style="color:#10b981;font-size:13px;margin-bottom:6px;">🏥 健康建议</div><div style="color:#e2e8f0;font-size:14px;line-height:1.8;">${formatAnalysisText(d.healthAdvice)}</div></div>`;
+                    }
+                    // 完整分析
+                    if (d.analysis) {
+                        html += `<div style="margin-top:14px;padding:14px;background:rgba(255,255,255,0.03);border-radius:10px;border-left:3px solid #667eea;">`;
+                        html += `<div style="color:#9393b8;font-size:12px;margin-bottom:8px;">📖 详细分析</div>`;
+                        html += `<div style="color:#e2e8f0;line-height:1.9;font-size:14px;">${formatAnalysisText(d.analysis)}</div>`;
+                        html += `</div>`;
+                    }
+                    // 评分
+                    if (d.scores) {
+                        html += `<div style="margin-top:14px;"><div style="color:#9393b8;font-size:12px;margin-bottom:8px;">综合评分</div><div style="display:flex;gap:8px;flex-wrap:wrap;">`;
+                        const labels = { overall: '综合', health: '健康', wealth: '财运', love: '感情', career: '事业' };
+                        const scoreColors = { overall: '#a78bfa', health: '#10b981', wealth: '#eab308', love: '#f472b6', career: '#667eea' };
+                        for (const [k, v] of Object.entries(d.scores)) {
+                            const sc = scoreColors[k] || '#a78bfa';
+                            html += `<div style="background:${sc}15;color:${sc};padding:6px 12px;border-radius:10px;font-size:12px;border:1px solid ${sc}33;">${labels[k]||k}: ${v}分</div>`;
+                        }
+                        html += `</div></div>`;
+                    }
+                    // 建议
+                    if (d.suggestions && d.suggestions.length) {
+                        html += `<div style="margin-top:14px;"><div style="color:#9393b8;font-size:12px;margin-bottom:8px;">💡 改运建议</div>`;
+                        d.suggestions.forEach((s, i) => {
+                            html += `<div style="background:rgba(255,255,255,0.04);border-radius:6px;padding:8px 12px;margin-bottom:6px;color:#b4b4d9;font-size:13px;">${i+1}. ${s}</div>`;
+                        });
                         html += `</div>`;
                     }
                     result.innerHTML = html;
                 } else if (data.success && !data.data) {
-                    result.innerHTML = `<div style="color:#fbbf24;">⚠️ AI 服务正在初始化中，请稍后再试</div>`;
+                    result.innerHTML = `<div style="color:#fbbf24;padding:20px;text-align:center;">⚠️ AI 服务正在初始化中，请稍后再试</div>`;
                 } else {
-                    result.innerHTML = `<div style="color:#ef4444;">⚠️ ${data.error || data.message || '分析失败，请重试'}</div>`;
+                    result.innerHTML = `<div style="color:#ef4444;padding:20px;text-align:center;">⚠️ ${data.error || data.message || '分析失败，请重试'}</div>`;
                 }
             } catch(err) {
-                result.innerHTML = '⚠️ 网络错误，请检查连接后重试';
+                result.innerHTML = '<div style="color:#ef4444;padding:20px;text-align:center;">⚠️ 网络错误，请检查连接后重试</div>';
             } finally {
                 btn.textContent = '✨ 开始排盘解析';
                 btn.disabled = false;
@@ -3925,13 +4000,42 @@
                     })
                 });
                 const data = await res.json();
-                if (data.success) {
-                    result.innerHTML = data.data?.result || data.data?.analysis || JSON.stringify(data.data, null, 2);
+                if (data.success && data.data) {
+                    // 复用和 handleBazi 相同的显示逻辑
+                    const d = data.data;
+                    const bazi = d.bazi || {};
+                    const wuxing = bazi.wuxingCount || {};
+                    let html = '';
+                    html += '<strong style="font-size:18px;display:block;margin-bottom:14px;color:#a78bfa;">🔮 深度命理解析</strong>';
+                    if (d.summary) {
+                        html += `<div style="background:rgba(251,191,36,0.1);border-radius:8px;padding:10px;margin-bottom:12px;text-align:center;color:#fbbf24;font-size:14px;">📌 ${d.summary}</div>`;
+                    }
+                    if (d.dayMasterDesc) {
+                        html += `<div style="background:rgba(16,185,129,0.1);border-radius:8px;padding:12px;margin-bottom:12px;border-left:3px solid #10b981;"><div style="color:#10b981;font-size:13px;margin-bottom:4px;">🎯 命格特征</div><div style="color:#e2e8f0;font-size:15px;line-height:1.6;">${d.dayMasterDesc}</div></div>`;
+                    }
+                    if (d.careerAdvice) html += `<div style="background:rgba(102,126,234,0.08);border-radius:8px;padding:12px;margin-bottom:10px;"><div style="color:#667eea;font-size:13px;margin-bottom:6px;">💼 事业建议</div><div style="color:#e2e8f0;font-size:14px;line-height:1.8;">${formatAnalysisText(d.careerAdvice)}</div></div>`;
+                    if (d.wealthAdvice) html += `<div style="background:rgba(234,179,8,0.08);border-radius:8px;padding:12px;margin-bottom:10px;"><div style="color:#eab308;font-size:13px;margin-bottom:6px;">💰 财运建议</div><div style="color:#e2e8f0;font-size:14px;line-height:1.8;">${formatAnalysisText(d.wealthAdvice)}</div></div>`;
+                    if (d.loveAdvice) html += `<div style="background:rgba(244,114,182,0.08);border-radius:8px;padding:12px;margin-bottom:10px;"><div style="color:#f472b6;font-size:13px;margin-bottom:6px;">💕 感情建议</div><div style="color:#e2e8f0;font-size:14px;line-height:1.8;">${formatAnalysisText(d.loveAdvice)}</div></div>`;
+                    if (d.healthAdvice) html += `<div style="background:rgba(16,185,129,0.08);border-radius:8px;padding:12px;margin-bottom:10px;"><div style="color:#10b981;font-size:13px;margin-bottom:6px;">🏥 健康建议</div><div style="color:#e2e8f0;font-size:14px;line-height:1.8;">${formatAnalysisText(d.healthAdvice)}</div></div>`;
+                    if (d.analysis) {
+                        html += `<div style="margin-top:14px;padding:14px;background:rgba(255,255,255,0.03);border-radius:10px;border-left:3px solid #667eea;"><div style="color:#9393b8;font-size:12px;margin-bottom:8px;">📖 详细分析</div><div style="color:#e2e8f0;line-height:1.9;font-size:14px;">${formatAnalysisText(d.analysis)}</div></div>`;
+                    }
+                    if (d.scores) {
+                        html += `<div style="margin-top:14px;"><div style="color:#9393b8;font-size:12px;margin-bottom:8px;">综合评分</div><div style="display:flex;gap:8px;flex-wrap:wrap;">`;
+                        const labels = { overall: '综合', health: '健康', wealth: '财运', love: '感情', career: '事业' };
+                        const scoreColors = { overall: '#a78bfa', health: '#10b981', wealth: '#eab308', love: '#f472b6', career: '#667eea' };
+                        for (const [k, v] of Object.entries(d.scores)) {
+                            const sc = scoreColors[k] || '#a78bfa';
+                            html += `<div style="background:${sc}15;color:${sc};padding:6px 12px;border-radius:10px;font-size:12px;border:1px solid ${sc}33;">${labels[k]||k}: ${v}分</div>`;
+                        }
+                        html += `</div></div>`;
+                    }
+                    result.innerHTML = html;
                 } else {
-                    result.innerHTML = `⚠️ ${data.error || data.message || '分析失败'}`;
+                    result.innerHTML = `<div style="color:#ef4444;padding:20px;text-align:center;">⚠️ ${data.error || data.message || '分析失败'}</div>`;
                 }
             } catch(err) {
-                result.innerHTML = '⚠️ 网络错误，请重试';
+                result.innerHTML = '<div style="color:#ef4444;padding:20px;text-align:center;">⚠️ 网络错误，请重试</div>';
             } finally {
                 btn.textContent = '🔮 深度命理解析';
                 btn.disabled = false;
@@ -4005,27 +4109,86 @@
                 if (data.success && data.data) {
                     const d = data.data;
                     let html = '<strong style="font-size:16px;display:block;margin-bottom:12px;">🏯 风水分析报告</strong>';
-                    if (d.summary) html += `<div style="color:#fbbf24;margin-bottom:12px;font-size:15px;">📌 ${d.summary}</div>`;
-                    html += `<div style="padding:12px;background:rgba(255,255,255,0.03);border-radius:8px;border-left:3px solid #10b981;color:#e2e8f0;white-space:pre-wrap;line-height:1.8;font-size:14px;">${d.analysis || '分析生成中...'}</div>`;
+                    
+                    // 财位分析（最重要）
+                    if (d.wealthPosition) {
+                        html += `<div style="background:linear-gradient(135deg,rgba(234,179,8,0.12),rgba(234,179,8,0.05));border-radius:10px;padding:16px;margin-bottom:14px;border-left:4px solid #eab308;">
+                            <div style="color:#eab308;font-size:15px;font-weight:600;margin-bottom:8px;">💰 财位分析（最重要）</div>
+                            <div style="color:#e2e8f0;font-size:14px;line-height:1.8;">${formatAnalysisText(d.wealthPosition)}</div>
+                        </div>`;
+                    }
+                    
+                    // 桃花位分析（次重要）
+                    if (d.lovePosition) {
+                        html += `<div style="background:linear-gradient(135deg,rgba(244,114,182,0.12),rgba(244,114,182,0.05));border-radius:10px;padding:16px;margin-bottom:14px;border-left:4px solid #f472b6;">
+                            <div style="color:#f472b6;font-size:15px;font-weight:600;margin-bottom:8px;">💕 桃花位分析</div>
+                            <div style="color:#e2e8f0;font-size:14px;line-height:1.8;">${formatAnalysisText(d.lovePosition)}</div>
+                        </div>`;
+                    }
+                    
+                    // 整体气场
+                    if (d.overallEnergy) {
+                        html += `<div style="background:rgba(16,185,129,0.08);border-radius:8px;padding:12px;margin-bottom:12px;">
+                            <div style="color:#10b981;font-size:13px;margin-bottom:6px;">🌟 整体气场</div>
+                            <div style="color:#e2e8f0;font-size:14px;line-height:1.6;">${d.overallEnergy}</div>
+                        </div>`;
+                    }
+                    
+                    // 旺财建议
+                    if (d.wealthFix && d.wealthFix.length) {
+                        html += `<div style="background:rgba(234,179,8,0.08);border-radius:8px;padding:12px;margin-bottom:10px;">
+                            <div style="color:#eab308;font-size:13px;margin-bottom:6px;">💰 旺财布局建议</div>
+                            <ul style="color:#e2e8f0;font-size:14px;line-height:1.8;padding-left:20px;">`;
+                        d.wealthFix.forEach(item => { html += `<li>${item}</li>`; });
+                        html += `</ul></div>`;
+                    }
+                    
+                    // 旺桃花建议
+                    if (d.loveFix && d.loveFix.length) {
+                        html += `<div style="background:rgba(244,114,182,0.08);border-radius:8px;padding:12px;margin-bottom:10px;">
+                            <div style="color:#f472b6;font-size:13px;margin-bottom:6px;">💕 旺桃花建议</div>
+                            <ul style="color:#e2e8f0;font-size:14px;line-height:1.8;padding-left:20px;">`;
+                        d.loveFix.forEach(item => { html += `<li>${item}</li>`; });
+                        html += `</ul></div>`;
+                    }
+                    
+                    // 综合建议
+                    if (d.generalFix && d.generalFix.length) {
+                        html += `<div style="background:rgba(102,126,234,0.08);border-radius:8px;padding:12px;margin-bottom:10px;">
+                            <div style="color:#667eea;font-size:13px;margin-bottom:6px;">🔧 综合改善建议</div>
+                            <ul style="color:#e2e8f0;font-size:14px;line-height:1.8;padding-left:20px;">`;
+                        d.generalFix.forEach(item => { html += `<li>${item}</li>`; });
+                        html += `</ul></div>`;
+                    }
+                    
+                    // 问题区域
+                    if (d.problemAreas && d.problemAreas.length) {
+                        html += `<div style="background:rgba(239,68,68,0.08);border-radius:8px;padding:12px;margin-bottom:10px;">
+                            <div style="color:#ef4444;font-size:13px;margin-bottom:6px;">⚠️ 问题区域</div>
+                            <ul style="color:#e2e8f0;font-size:14px;line-height:1.8;padding-left:20px;">`;
+                        d.problemAreas.forEach(item => { html += `<li>${item}</li>`; });
+                        html += `</ul></div>`;
+                    }
+                    
+                    // 完整分析
+                    if (d.analysis) {
+                        html += `<div style="margin-top:14px;padding:14px;background:rgba(255,255,255,0.03);border-radius:10px;border-left:3px solid #667eea;">
+                            <div style="color:#9393b8;font-size:12px;margin-bottom:8px;">📖 详细分析</div>
+                            <div style="color:#e2e8f0;line-height:1.9;font-size:14px;">${formatAnalysisText(d.analysis)}</div>
+                        </div>`;
+                    }
+                    
+                    // 评分
                     if (d.scores) {
-                        html += `<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap;">`;
+                        html += `<div style="margin-top:14px;"><div style="color:#9393b8;font-size:12px;margin-bottom:8px;">综合评分</div><div style="display:flex;gap:8px;flex-wrap:wrap;">`;
                         const labels = { overall: '综合', health: '健康', wealth: '财运', love: '感情', career: '事业' };
                         for (const [k, v] of Object.entries(d.scores)) {
                             html += `<span style="background:rgba(16,185,129,0.15);padding:4px 10px;border-radius:12px;font-size:12px;color:#b4b4d9;">${labels[k]||k}: ${v}</span>`;
                         }
-                        html += `</div>`;
+                        html += `</div></div>`;
                     }
-                    if (d.suggestions && d.suggestions.length) {
-                        html += `<div style="margin-top:12px;"><strong style="color:#a78bfa;">💡 改善建议</strong>`;
-                        d.suggestions.forEach((s, i) => { html += `<div style="margin-top:6px;color:#b4b4d9;">${i+1}. ${s}</div>`; });
-                        html += `</div>`;
-                    }
+                    
                     resultEl.innerHTML = html;
-                } else if (data.error && data.error.includes('认证') && !authToken) {
-                    resultEl.innerHTML = `<div style="text-align:center;padding:20px;">
-                        <div style="color:#fbbf24;font-size:16px;margin-bottom:12px;">🔒 风水分析需要登录账号</div>
-                        <button onclick="closeAllModals(); setTimeout(()=>openModal('login'),100)" style="background:linear-gradient(135deg,#667eea,#764ba2);color:#fff;border:none;padding:10px 24px;border-radius:8px;cursor:pointer;font-size:14px;">立即登录</button>
-                    </div>`;
                 } else if (data.success && !data.data) {
                     resultEl.innerHTML = `<div style="color:#fbbf24;">⚠️ AI 服务正在初始化中，请稍后再试</div>`;
                 } else {
