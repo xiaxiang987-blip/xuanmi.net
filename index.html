@@ -3862,8 +3862,12 @@
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         birthDate: `${birthYear}-${birthMonth}-${birthDay}`,
-                        birthTime: document.getElementById('baziHour').value + ':00',
-                        gender: genderVal === 'male' ? 'MALE' : genderVal === 'female' ? 'FEMALE' : 'OTHER',
+                        // 补零确保 HH:MM 格式（如 "0" → "00", "1" → "01"）
+                        birthTime: String(document.getElementById('baziHour').value).padStart(2, '0') + ':00',
+                        // 兼容大小写：male/MALE → MALE
+                        gender: (genderVal || '').toUpperCase() === 'MALE' ? 'MALE'
+                               : (genderVal || '').toUpperCase() === 'FEMALE' ? 'FEMALE'
+                               : 'OTHER',
                         language: 'zh',
                     })
                 });
