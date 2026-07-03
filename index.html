@@ -3065,9 +3065,45 @@
         });
 
         // ==================== API 配置 ====================
-        const API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+        // 多 URL 回退机制：依次尝试，直到成功
+        const API_URLS = [
+            'https://api.xuanmi.net',           // 1. 自定义域名（Railway SSL 签发后可用）
+            'https://xuanmi-api-proxy.workers.dev', // 2. Cloudflare Worker 代理（国内可访问）
+            'https://api-production-a0b57.up.railway.app', // 3. Railway 直连（备用）
+        ];
+        let API_BASE = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
             ? 'http://localhost:3001'
-            : 'https://api.xuanmi.net';
+            : API_URLS[0];
+        let apiBaseUrl = API_BASE; // 当前可用的 API 地址
+
+        // 带超时的 fetch 请求
+        async function apiFetch(path, options = {}, timeoutMs = 30000) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+            options.signal = controller.signal;
+
+            // 如果不是 localhost，依次尝试多个 URL
+            if (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+                for (const url of API_URLS) {
+                    try {
+                        const res = await fetch(url + path, options);
+                        // 如果返回了有效响应（非502/503），使用这个 URL
+                        if (res.status < 500) {
+                            apiBaseUrl = url;
+                            return res;
+                        }
+                    } catch (e) {
+                        // 此 URL 失败，尝试下一个
+                        console.warn('API 请求失败，尝试下一个地址:', url, e.message);
+                    }
+                }
+                // 所有 URL 都失败了，抛出错误
+                throw new Error('所有 API 地址都无法连接，请检查网络后重试');
+            } else {
+                // localhost 模式，直接请求
+                return fetch(API_BASE + path, options);
+            }
+        }
 
         // ==================== 弹窗管理 ====================
         let currentUser = null;
@@ -3761,7 +3797,7 @@
             btn.textContent = '注册中...';
             btn.disabled = true;
             try {
-                const res = await fetch(`${API_BASE}/api/auth/register`, {
+                const res = await apiFetch('/api/auth/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -3787,7 +3823,7 @@
                     errBox.style.display = 'block';
                 }
             } catch(err) {
-                errBox.textContent = '网络错误，请检查连接后重试';
+                errBox.textContent = '连接服务器失败，正在尝试备用线路... 如果持续失败请刷新页面重试';
                 errBox.style.display = 'block';
             } finally {
                 btn.textContent = '免费注册';
@@ -3804,7 +3840,7 @@
             btn.textContent = '登录中...';
             btn.disabled = true;
             try {
-                const res = await fetch(`${API_BASE}/api/auth/login`, {
+                const res = await apiFetch('/api/auth/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -3825,7 +3861,7 @@
                     errBox.style.display = 'block';
                 }
             } catch(err) {
-                errBox.textContent = '网络错误，请检查连接后重试';
+                errBox.textContent = '连接服务器失败，正在尝试备用线路... 如果持续失败请刷新页面重试';
                 errBox.style.display = 'block';
             } finally {
                 btn.textContent = '登 录';
@@ -3857,7 +3893,7 @@
                 const birthYear = document.getElementById('baziYear').value;
                 const birthMonth = String(document.getElementById('baziMonth').value).padStart(2, '0');
                 const birthDay = String(document.getElementById('baziDay').value).padStart(2, '0');
-                const res = await fetch(`${API_BASE}/api/divination/bazi/free`, {
+                const res = await apiFetch('/api/divination/bazi/free', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -3971,7 +4007,7 @@
                     result.innerHTML = `<div style="color:#ef4444;padding:20px;text-align:center;">⚠️ ${data.error || data.message || '分析失败，请重试'}</div>`;
                 }
             } catch(err) {
-                result.innerHTML = '<div style="color:#ef4444;padding:20px;text-align:center;">⚠️ 网络错误，请检查连接后重试</div>';
+                result.innerHTML = '<div style="color:#ef4444;padding:20px;text-align:center;">⚠️ 连接服务器失败，请稍后刷新页面重试<br><span style="font-size:12px;color:#9393b8;">已尝试所有备用线路</span></div>';
             } finally {
                 btn.textContent = '✨ 开始排盘解析';
                 btn.disabled = false;
@@ -3992,7 +4028,7 @@
                 const fullBirthYear = document.getElementById('fullYear').value;
                 const fullBirthMonth = String(document.getElementById('fullMonth').value).padStart(2, '0');
                 const fullBirthDay = String(document.getElementById('fullDay').value).padStart(2, '0');
-                const res = await fetch(`${API_BASE}/api/divination/analyze`, {
+                const res = await apiFetch('/api/divination/analyze', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${authToken}` },
                     body: JSON.stringify({
@@ -4039,7 +4075,7 @@
                     result.innerHTML = `<div style="color:#ef4444;padding:20px;text-align:center;">⚠️ ${data.error || data.message || '分析失败'}</div>`;
                 }
             } catch(err) {
-                result.innerHTML = '<div style="color:#ef4444;padding:20px;text-align:center;">⚠️ 网络错误，请重试</div>';
+                result.innerHTML = '<div style="color:#ef4444;padding:20px;text-align:center;">⚠️ 连接服务器失败，请稍后重试<br><span style="font-size:12px;color:#9393b8;">已尝试所有备用线路</span></div>';
             } finally {
                 btn.textContent = '🔮 深度命理解析';
                 btn.disabled = false;
@@ -4104,7 +4140,7 @@
                 const headers = { 'Content-Type': 'application/json' };
                 if (authToken) headers['Authorization'] = `Bearer ${authToken}`;
 
-                const res = await fetch(`${API_BASE}/api/divination/fengshui`, {
+                const res = await apiFetch('/api/divination/fengshui', {
                     method: 'POST',
                     headers: headers,
                     body: JSON.stringify({ description: fullDesc, analysisType: analysisType, language: 'zh' })
@@ -4199,7 +4235,7 @@
                     resultEl.innerHTML = `<div style="color:#ef4444;">⚠️ ${data.error || data.message || '分析失败，请重试'}</div>`;
                 }
             } catch(err) {
-                resultEl.innerHTML = '⚠️ 网络错误，请检查连接后重试';
+                resultEl.innerHTML = '⚠️ 连接服务器失败，请稍后刷新重试（已尝试所有备用线路）';
             }
         }
 
@@ -4217,7 +4253,7 @@
                 const targetLang = document.getElementById('targetLang').value;
                 const contentType = document.getElementById('contentType').value;
 
-                const res = await fetch(`${API_BASE}/api/divination/analyze`, {
+                const res = await apiFetch('/api/divination/analyze', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
@@ -4237,7 +4273,7 @@
                     result.innerHTML = `⚠️ ${data.error || '翻译服务暂时不可用，请稍后再试'}`;
                 }
             } catch(err) {
-                result.innerHTML = '⚠️ 网络错误，请检查连接后重试';
+                result.innerHTML = '⚠️ 连接服务器失败，请稍后刷新重试（已尝试所有备用线路）';
             } finally {
                 btn.textContent = '🌐 AI 翻译';
                 btn.disabled = false;
